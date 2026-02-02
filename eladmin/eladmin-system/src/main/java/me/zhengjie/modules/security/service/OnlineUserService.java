@@ -51,7 +51,7 @@ public class OnlineUserService {
      * @param request /
      */
     public void save(JwtUserDto jwtUserDto, String token, HttpServletRequest request){
-        String dept = jwtUserDto.getUser().getDept().getName();
+        String dept = jwtUserDto.getUser().getDept() != null ? jwtUserDto.getUser().getDept().getName() : "未分配部门";
         String ip = StringUtils.getIp(request);
         String id = tokenProvider.getId(token);
         String browser = StringUtils.getBrowser(request);

@@ -262,7 +262,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
             Map<String, Object> map = new LinkedHashMap<>();
             map.put("用户名", user.getUsername());
             map.put("角色", roles);
-            map.put("部门", user.getDept().getName());
+            map.put("部门", user.getDept() != null ? user.getDept().getName() : "未分配");
             map.put("岗位", user.getJobs().stream().map(Job::getName).collect(Collectors.toList()));
             map.put("邮箱", user.getEmail());
             map.put("状态", user.getEnabled() ? "启用" : "禁用");
@@ -322,6 +322,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
         // 保存用户
         save(user);
+
+        // 分配默认角色（普通用户，role_id = 2）
+        Role defaultRole = new Role();
+        defaultRole.setId(2L);
+        Set<Role> roles = new HashSet<>();
+        roles.add(defaultRole);
+        userRoleMapper.insertData(user.getId(), roles);
 
         return user;
     }

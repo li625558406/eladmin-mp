@@ -27,10 +27,13 @@ import me.zhengjie.modules.system.service.EmailVerifyCodeService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.mail.internet.MimeMessage;
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -93,25 +96,24 @@ public class EmailVerifyCodeServiceImpl extends ServiceImpl<EmailVerifyCodeMappe
 
         // 发送邮件
         try {
-            SimpleMailMessage message = new SimpleMailMessage();
-            message.setFrom(from);
-            message.setTo(email);
+            MimeMessage mimeMessage = mailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true, "UTF-8");
+            
+            helper.setFrom(from);
+            helper.setTo(email);
             
             String typeText = getTypeText(type);
-            message.setSubject("KONUS AI - " + typeText + "验证码");
+            helper.setSubject("KONUS AI - " + typeText + "验证码");
             
-            String content = String.format(
-                "您好！\n\n" +
-                "您正在进行%s操作，验证码为：%s\n\n" +
-                "验证码有效期为%d分钟，请尽快使用。\n\n" +
-                "如非本人操作，请忽略此邮件。\n\n" +
-                "KONUS AI\n" +
-                "%s",
-                typeText, code, expiration / 60, new Date()
-            );
+            // 格式化时间
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+            String currentTime = sdf.format(new Date());
             
-            message.setText(content);
-            mailSender.send(message);
+            // HTML邮件内容
+            String htmlContent = buildEmailHtml(typeText, code, expiration / 60, currentTime);
+            helper.setText(htmlContent, true);
+            
+            mailSender.send(mimeMessage);
             
             log.info("验证码邮件发送成功: email={}, type={}, code={}", email, type, code);
             return true;
@@ -175,5 +177,119 @@ public class EmailVerifyCodeServiceImpl extends ServiceImpl<EmailVerifyCodeMappe
             default:
                 return "验证";
         }
+    }
+
+    /**
+     * 构建HTML邮件内容 - 高级清新风格
+     */
+    private String buildEmailHtml(String typeText, String code, int validMinutes, String currentTime) {
+        return "<!DOCTYPE html>" +
+            "<html>" +
+            "<head>" +
+            "    <meta charset='UTF-8'>" +
+            "    <meta name='viewport' content='width=device-width, initial-scale=1.0'>" +
+            "    <link href='https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700&family=Outfit:wght@300;500;700&display=swap' rel='stylesheet'>" +
+            "</head>" +
+            "<body style='margin: 0; padding: 0; background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 50%, #FCE7F3 100%); font-family: \"Outfit\", -apple-system, sans-serif;'>" +
+            "    <table width='100%' cellpadding='0' cellspacing='0' style='background: linear-gradient(135deg, #E0E7FF 0%, #F3E8FF 50%, #FCE7F3 100%); padding: 30px 20px;'>" +
+            "        <tr>" +
+            "            <td align='center'>" +
+            "                <!-- Main Container -->" +
+            "                <table width='550' cellpadding='0' cellspacing='0' style='background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); border-radius: 20px; box-shadow: 0 20px 40px rgba(45, 91, 255, 0.15), 0 0 0 1px rgba(255, 255, 255, 0.8); overflow: hidden; position: relative;'>" +
+            "                    " +
+            "                    <!-- Decorative Background Pattern -->" +
+            "                    <tr>" +
+            "                        <td style='position: absolute; width: 100%; height: 100%; background: radial-gradient(circle at 15% 30%, rgba(224, 231, 255, 0.4) 0%, transparent 40%), radial-gradient(circle at 85% 70%, rgba(252, 231, 243, 0.3) 0%, transparent 40%);'></td>" +
+            "                    </tr>" +
+            "                    " +
+            "                    <!-- Header with Brand -->" +
+            "                    <tr>" +
+            "                        <td style='padding: 35px 40px 25px; position: relative; z-index: 1;'>" +
+            "                            <!-- Logo Area -->" +
+            "                            <table width='100%' cellpadding='0' cellspacing='0'>" +
+            "                                <tr>" +
+            "                                    <td>" +
+            "                                        <div style='display: inline-block; padding: 10px 24px; background: linear-gradient(135deg, rgba(45, 91, 255, 0.1) 0%, rgba(78, 127, 255, 0.05) 100%); border: 1.5px solid rgba(45, 91, 255, 0.2); border-radius: 12px; backdrop-filter: blur(10px);'>" +
+            "                                            <h1 style='margin: 0; color: #2D5BFF; font-size: 22px; font-weight: 700; letter-spacing: 2px; font-family: \"JetBrains Mono\", monospace;'>KONUS<span style='color: #FF6B9D;'>·</span>AI</h1>" +
+            "                                        </div>" +
+            "                                    </td>" +
+            "                                </tr>" +
+            "                            </table>" +
+            "                            " +
+            "                            <!-- Title -->" +
+            "                            <h2 style='margin: 28px 0 10px 0; color: #1a1a2e; font-size: 26px; font-weight: 700; line-height: 1.2;'>" + typeText + "验证码</h2>" +
+            "                            <p style='margin: 0; color: #64748B; font-size: 14px; font-weight: 300; line-height: 1.5;'>请使用以下验证码完成您的<span style='color: #2D5BFF; font-weight: 500;'>" + typeText + "</span>操作</p>" +
+            "                        </td>" +
+            "                    </tr>" +
+            "                    " +
+            "                    <!-- Verification Code Section -->" +
+            "                    <tr>" +
+            "                        <td style='padding: 0 40px 35px; position: relative; z-index: 1;'>" +
+            "                            <!-- Code Container -->" +
+            "                            <div style='background: linear-gradient(135deg, rgba(224, 231, 255, 0.6) 0%, rgba(243, 232, 255, 0.4) 100%); border: 2px solid rgba(45, 91, 255, 0.15); border-radius: 16px; padding: 30px 25px; text-align: center; position: relative; overflow: hidden; box-shadow: 0 8px 30px rgba(45, 91, 255, 0.08);'>" +
+            "                                <!-- Subtle Glow -->" +
+            "                                <div style='position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); width: 250px; height: 250px; background: radial-gradient(circle, rgba(45, 91, 255, 0.1) 0%, transparent 70%); filter: blur(50px);'></div>" +
+            "                                " +
+            "                                <!-- Code Label -->" +
+            "                                <p style='margin: 0 0 18px 0; color: #64748B; font-size: 12px; font-weight: 600; letter-spacing: 1.5px; text-transform: uppercase;'>验证码 / Verification Code</p>" +
+            "                                " +
+            "                                <!-- The Code -->" +
+            "                                <div style='position: relative; display: inline-block; padding: 18px 32px; background: rgba(255, 255, 255, 0.8); border-radius: 14px; box-shadow: 0 6px 24px rgba(45, 91, 255, 0.12), inset 0 1px 0 rgba(255, 255, 255, 1);'>" +
+            "                                    <p style='margin: 0; color: #2D5BFF; font-size: 42px; font-weight: 700; letter-spacing: 12px; font-family: \"JetBrains Mono\", monospace; text-shadow: 0 2px 10px rgba(45, 91, 255, 0.2);'>" + code + "</p>" +
+            "                                </div>" +
+            "                                " +
+            "                                <!-- Validity Info -->" +
+            "                                <div style='margin-top: 24px; padding-top: 24px; border-top: 1px solid rgba(45, 91, 255, 0.1);'>" +
+            "                                    <table width='100%' cellpadding='0' cellspacing='0'>" +
+            "                                        <tr>" +
+            "                                            <td width='50%' style='text-align: center; padding: 8px;'>" +
+            "                                                <div style='color: #94A3B8; font-size: 11px; font-weight: 600; margin-bottom: 6px;'>有效期</div>" +
+            "                                                <div style='color: #2D5BFF; font-size: 18px; font-weight: 700; font-family: \"JetBrains Mono\", monospace;'>" + validMinutes + "<span style='font-size: 13px; color: #64748B; font-weight: 500; margin-left: 3px;'>分钟</span></div>" +
+            "                                            </td>" +
+            "                                            <td width='50%' style='text-align: center; padding: 8px; border-left: 1px solid rgba(45, 91, 255, 0.1);'>" +
+            "                                                <div style='color: #94A3B8; font-size: 11px; font-weight: 600; margin-bottom: 6px;'>操作类型</div>" +
+            "                                                <div style='color: #1a1a2e; font-size: 14px; font-weight: 600;'>" + typeText + "</div>" +
+            "                                            </td>" +
+            "                                        </tr>" +
+            "                                    </table>" +
+            "                                </div>" +
+            "                            </div>" +
+            "                            " +
+            "                            <!-- Security Notice -->" +
+            "                            <div style='margin-top: 24px; padding: 18px 20px; background: linear-gradient(135deg, rgba(252, 231, 243, 0.6) 0%, rgba(243, 232, 255, 0.4) 100%); border: 1.5px solid rgba(255, 107, 157, 0.2); border-radius: 14px; box-shadow: 0 4px 16px rgba(255, 107, 157, 0.08);'>" +
+            "                                <table width='100%' cellpadding='0' cellspacing='0'>" +
+            "                                    <tr>" +
+            "                                        <td width='40' style='vertical-align: top;'>" +
+            "                                            <div style='width: 32px; height: 32px; background: linear-gradient(135deg, rgba(255, 107, 157, 0.15) 0%, rgba(255, 107, 157, 0.08) 100%); border: 1.5px solid rgba(255, 107, 157, 0.25); border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 16px;'>🔒</div>" +
+            "                                        </td>" +
+            "                                        <td style='padding-left: 14px; vertical-align: top;'>" +
+            "                                            <p style='margin: 0 0 6px 0; color: #1a1a2e; font-size: 13px; font-weight: 600;'>安全提醒</p>" +
+            "                                            <p style='margin: 0; color: #64748B; font-size: 12px; line-height: 1.6;'>请勿向任何人透露此验证码。KONUS AI 官方不会主动索要您的验证码。</p>" +
+            "                                        </td>" +
+            "                                    </tr>" +
+            "                                </table>" +
+            "                            </div>" +
+            "                        </td>" +
+            "                    </tr>" +
+            "                    " +
+            "                    <!-- Footer -->" +
+            "                    <tr>" +
+            "                        <td style='padding: 28px 40px; border-top: 1px solid rgba(45, 91, 255, 0.08); position: relative; z-index: 1;'>" +
+            "                            <table width='100%' cellpadding='0' cellspacing='0'>" +
+            "                                <tr>" +
+            "                                    <td style='text-align: center;'>" +
+            "                                        <p style='margin: 0 0 8px 0; color: #94A3B8; font-size: 11px; font-weight: 500;'>发送时间：" + currentTime + "</p>" +
+            "                                        <p style='margin: 0; color: #CBD5E1; font-size: 10px; font-weight: 500; letter-spacing: 0.5px;'>© 2026 KONUS AI · 开启您的智能管理之旅</p>" +
+            "                                    </td>" +
+            "                                </tr>" +
+            "                            </table>" +
+            "                        </td>" +
+            "                    </tr>" +
+            "                </table>" +
+            "            </td>" +
+            "        </tr>" +
+            "    </table>" +
+            "</body>" +
+            "</html>";
     }
 }

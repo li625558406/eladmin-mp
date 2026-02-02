@@ -2,9 +2,9 @@
   <div class="user-portal-container">
     <div class="user-portal-content">
       <div class="logo-section">
-        <img src="@/assets/images/logo.png" alt="ELADMIN" class="logo">
-        <h1 class="title">ELADMIN</h1>
-        <p class="subtitle">欢迎使用 ELADMIN 系统</p>
+        <img src="@/assets/images/logo.png" alt="KONUS AI" class="logo">
+        <h1 class="title">KONUS AI</h1>
+        <p class="subtitle">欢迎使用 KONUS AI 系统</p>
       </div>
 
       <div class="content-section">

@@ -17,7 +17,9 @@ const ADMIN_HOME_PATH = ADMIN_BASE_PATH
 // 白名单：不需要登录就可以访问的页面
 const whiteList = [
   ADMIN_LOGIN_PATH, // 后台登录页
-  '/' // 用户端首页（根路径）
+  '/', // 根路径
+  '/user/login', // 用户端登录页
+  '/user/home' // 用户端首页（暂时加入白名单，待开发用户端认证系统）
 ]
 
 router.beforeEach((to, from, next) => {

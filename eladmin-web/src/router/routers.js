@@ -62,11 +62,29 @@ export const constantRouterMap = [
       }
     ]
   },
-  // 根路径保留给用户端使用
+  // 用户端路由
   {
     path: '/',
+    redirect: '/user/login',
+    hidden: true
+  },
+  {
+    path: '/user',
     component: (resolve) => require(['@/views/user-portal'], resolve),
-    meta: { title: 'ELADMIN - 用户端', noCache: true }
+    redirect: '/user/login',
+    hidden: true
+  },
+  {
+    path: '/user/login',
+    component: (resolve) => require(['@/views/user-portal/login'], resolve),
+    meta: { title: 'KONUS AI - 用户登录', noCache: true },
+    hidden: true
+  },
+  {
+    path: '/user/home',
+    component: (resolve) => require(['@/views/user-portal/home'], resolve),
+    meta: { title: 'KONUS AI - 用户首页', noCache: true },
+    hidden: true
   }
 ]
 

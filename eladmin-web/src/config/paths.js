@@ -28,10 +28,14 @@ export const ADMIN_PATHS = {
 export const USER_PATHS = {
   // 基础路径
   BASE: '/',
-  // 用户登录页（待开发）
+  // 用户登录页
   LOGIN: '/user/login',
-  // 用户首页（待开发）
-  HOME: '/user/home'
+  // 用户首页
+  HOME: '/user/home',
+  // 个人中心（待开发）
+  PROFILE: '/user/profile',
+  // 设置页面（待开发）
+  SETTINGS: '/user/settings'
 }
 
 // 默认导出所有路径配置

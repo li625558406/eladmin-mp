@@ -133,4 +133,20 @@ public interface UserService extends IService<User> {
      * @param pwd 密码
      */
     void resetPwd(Set<Long> ids, String pwd);
+
+    /**
+     * 用户注册
+     * @param username 用户名
+     * @param email 邮箱
+     * @param password 密码
+     * @return User 新注册的用户
+     */
+    User register(String username, String email, String password);
+
+    /**
+     * 根据邮箱查询用户
+     * @param email 邮箱
+     * @return User
+     */
+    User findByEmail(String email);
 }

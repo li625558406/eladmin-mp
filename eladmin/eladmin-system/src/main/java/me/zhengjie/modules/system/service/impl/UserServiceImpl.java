@@ -292,4 +292,42 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
     private void flushCache(String username) {
         userCacheManager.cleanUserCache(username);
     }
+
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public User register(String username, String email, String password) {
+        // 检查用户名是否已存在
+        User existUser = findByName(username);
+        if (existUser != null) {
+            throw new EntityExistException(User.class, "username", username);
+        }
+
+        // 检查邮箱是否已存在
+        User existEmail = findByEmail(email);
+        if (existEmail != null) {
+            throw new EntityExistException(User.class, "email", email);
+        }
+
+        // 创建新用户
+        User user = new User();
+        user.setUsername(username);
+        user.setNickName(username); // 默认昵称为用户名
+        user.setEmail(email);
+        user.setPassword(password); // 密码已经加密
+        user.setEnabled(true);
+        user.setIsAdmin(false);
+        user.setPhone(""); // 默认空
+        user.setGender(""); // 默认空
+        user.setPwdResetTime(new Date());
+
+        // 保存用户
+        save(user);
+
+        return user;
+    }
+
+    @Override
+    public User findByEmail(String email) {
+        return userMapper.findByEmail(email);
+    }
 }

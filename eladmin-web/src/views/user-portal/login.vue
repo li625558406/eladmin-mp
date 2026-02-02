@@ -61,9 +61,10 @@
           <transition name="form-fade" mode="out-in">
             <div v-if="isLogin" key="login" class="form-container">
               <h2 class="form-title">欢迎回来</h2>
-              <p class="form-subtitle">登录您的账户继续使用</p>
+              <p class="form-subtitle">{{ isEmailLogin ? '使用邮箱验证码登录' : '登录您的账户继续使用' }}</p>
 
-              <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="auth-form">
+              <!-- 用户名密码登录 -->
+              <el-form v-if="!isEmailLogin" ref="loginForm" :model="loginForm" :rules="loginRules" class="auth-form">
                 <el-form-item prop="username">
                   <div class="input-wrapper">
                     <label class="input-label">用户名</label>
@@ -106,6 +107,70 @@
                   <span v-if="!loading" class="btn-text">登录</span>
                   <span v-else class="btn-text">登录中...</span>
                 </el-button>
+
+                <div class="login-switch">
+                  <a href="javascript:;" class="switch-link" @click="toggleLoginType">
+                    <i class="el-icon-message" /> 使用邮箱验证码登录
+                  </a>
+                </div>
+              </el-form>
+
+              <!-- 邮箱验证码登录 -->
+              <el-form v-else ref="emailLoginForm" :model="emailLoginForm" :rules="emailLoginRules" class="auth-form">
+                <el-form-item prop="email">
+                  <div class="input-wrapper">
+                    <label class="input-label">邮箱</label>
+                    <el-input
+                      v-model="emailLoginForm.email"
+                      placeholder="请输入邮箱地址"
+                      prefix-icon="el-icon-message"
+                      autocomplete="off"
+                    />
+                  </div>
+                </el-form-item>
+
+                <el-form-item prop="code">
+                  <div class="input-wrapper">
+                    <label class="input-label">验证码</label>
+                    <div class="code-input-wrapper">
+                      <el-input
+                        v-model="emailLoginForm.code"
+                        placeholder="请输入邮箱验证码"
+                        prefix-icon="el-icon-key"
+                        maxlength="6"
+                        @keyup.enter.native="handleEmailLogin"
+                      />
+                      <el-button
+                        :disabled="loginCodeSending || loginCodeCountdown > 0"
+                        class="code-btn"
+                        @click="sendLoginCode"
+                      >
+                        {{ loginCodeBtnText }}
+                      </el-button>
+                    </div>
+                  </div>
+                </el-form-item>
+
+                <div class="form-options">
+                  <el-checkbox v-model="emailLoginForm.rememberMe">记住我</el-checkbox>
+                  <a href="javascript:;" class="forgot-link">忘记密码？</a>
+                </div>
+
+                <el-button
+                  :loading="loading"
+                  type="primary"
+                  class="submit-btn login-btn"
+                  @click="handleEmailLogin"
+                >
+                  <span v-if="!loading" class="btn-text">登录</span>
+                  <span v-else class="btn-text">登录中...</span>
+                </el-button>
+
+                <div class="login-switch">
+                  <a href="javascript:;" class="switch-link" @click="toggleLoginType">
+                    <i class="el-icon-user" /> 使用用户名密码登录
+                  </a>
+                </div>
               </el-form>
             </div>
 
@@ -136,6 +201,27 @@
                       prefix-icon="el-icon-message"
                       autocomplete="new-email"
                     />
+                  </div>
+                </el-form-item>
+
+                <el-form-item prop="code">
+                  <div class="input-wrapper">
+                    <label class="input-label">验证码</label>
+                    <div class="code-input-wrapper">
+                      <el-input
+                        v-model="registerForm.code"
+                        placeholder="请输入邮箱验证码"
+                        prefix-icon="el-icon-key"
+                        maxlength="6"
+                      />
+                      <el-button
+                        :disabled="registerCodeSending || registerCodeCountdown > 0"
+                        class="code-btn"
+                        @click="sendRegisterCode"
+                      >
+                        {{ registerCodeBtnText }}
+                      </el-button>
+                    </div>
                   </div>
                 </el-form-item>
 
@@ -198,6 +284,9 @@
 </template>
 
 <script>
+import { sendEmailCode } from '@/api/emailVerifyCode'
+import { register, emailLogin } from '@/api/userRegister'
+
 export default {
   name: 'UserLogin',
   data() {
@@ -214,19 +303,32 @@ export default {
 
     return {
       isLogin: true,
+      isEmailLogin: false,
       loading: false,
       loginForm: {
         username: '',
         password: '',
         rememberMe: false
       },
+      emailLoginForm: {
+        email: '',
+        code: '',
+        rememberMe: false
+      },
+      loginCodeSending: false,
+      loginCodeCountdown: 0,
+      loginCodeTimer: null,
       registerForm: {
         username: '',
         email: '',
+        code: '',
         password: '',
         confirmPassword: '',
         agreeTerms: false
       },
+      registerCodeSending: false,
+      registerCodeCountdown: 0,
+      registerCodeTimer: null,
       loginRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -237,6 +339,16 @@ export default {
           { min: 6, message: '密码长度不能少于 6 个字符', trigger: 'blur' }
         ]
       },
+      emailLoginRules: {
+        email: [
+          { required: true, message: '请输入邮箱地址', trigger: 'blur' },
+          { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入邮箱验证码', trigger: 'blur' },
+          { len: 6, message: '验证码为6位数字', trigger: 'blur' }
+        ]
+      },
       registerRules: {
         username: [
           { required: true, message: '请输入用户名', trigger: 'blur' },
@@ -245,6 +357,10 @@ export default {
         email: [
           { required: true, message: '请输入邮箱地址', trigger: 'blur' },
           { type: 'email', message: '请输入正确的邮箱地址', trigger: 'blur' }
+        ],
+        code: [
+          { required: true, message: '请输入邮箱验证码', trigger: 'blur' },
+          { len: 6, message: '验证码为6位数字', trigger: 'blur' }
         ],
         password: [
           { required: true, message: '请输入密码', trigger: 'blur' },
@@ -261,22 +377,50 @@ export default {
       return {
         transform: this.isLogin ? 'translateX(0)' : 'translateX(100%)'
       }
+    },
+    registerCodeBtnText() {
+      if (this.registerCodeCountdown > 0) {
+        return `${this.registerCodeCountdown}秒后重试`
+      }
+      return this.registerCodeSending ? '发送中...' : '获取验证码'
+    },
+    loginCodeBtnText() {
+      if (this.loginCodeCountdown > 0) {
+        return `${this.loginCodeCountdown}秒后重试`
+      }
+      return this.loginCodeSending ? '发送中...' : '获取验证码'
+    }
+  },
+  beforeDestroy() {
+    // 清理定时器
+    if (this.registerCodeTimer) {
+      clearInterval(this.registerCodeTimer)
+    }
+    if (this.loginCodeTimer) {
+      clearInterval(this.loginCodeTimer)
     }
   },
   methods: {
     switchToLogin() {
       this.isLogin = true
+      this.isEmailLogin = false
       this.$refs.registerForm && this.$refs.registerForm.clearValidate()
     },
     switchToRegister() {
       this.isLogin = false
       this.$refs.loginForm && this.$refs.loginForm.clearValidate()
+      this.$refs.emailLoginForm && this.$refs.emailLoginForm.clearValidate()
+    },
+    toggleLoginType() {
+      this.isEmailLogin = !this.isEmailLogin
+      this.$refs.loginForm && this.$refs.loginForm.clearValidate()
+      this.$refs.emailLoginForm && this.$refs.emailLoginForm.clearValidate()
     },
     handleLogin() {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // 模拟登录请求
+          // TODO: 实现用户名密码登录
           setTimeout(() => {
             this.loading = false
             this.$message.success('登录成功！')
@@ -284,6 +428,91 @@ export default {
             this.$router.push('/user/home')
           }, 1000)
         }
+      })
+    },
+    handleEmailLogin() {
+      this.$refs.emailLoginForm.validate(valid => {
+        if (valid) {
+          this.loading = true
+          emailLogin({
+            email: this.emailLoginForm.email,
+            code: this.emailLoginForm.code
+          }).then(res => {
+            this.loading = false
+            this.$message.success('登录成功！')
+            // 存储token
+            if (res.token) {
+              // TODO: 存储token到vuex和localStorage
+              console.log('Token:', res.token)
+              console.log('User:', res.user)
+            }
+            // 跳转到用户首页
+            this.$router.push('/user/home')
+          }).catch(err => {
+            this.loading = false
+            this.$message.error(err.message || '登录失败')
+          })
+        }
+      })
+    },
+    sendLoginCode() {
+      // 先验证邮箱字段
+      this.$refs.emailLoginForm.validateField('email', (errorMessage) => {
+        if (errorMessage) {
+          return
+        }
+
+        this.loginCodeSending = true
+        sendEmailCode(this.emailLoginForm.email, 'login').then(res => {
+          this.loginCodeSending = false
+          if (res.success) {
+            this.$message.success(res.message || '验证码已发送，请查收邮件')
+            // 开始倒计时
+            this.loginCodeCountdown = 60
+            this.loginCodeTimer = setInterval(() => {
+              this.loginCodeCountdown--
+              if (this.loginCodeCountdown <= 0) {
+                clearInterval(this.loginCodeTimer)
+                this.loginCodeTimer = null
+              }
+            }, 1000)
+          } else {
+            this.$message.error(res.message || '验证码发送失败')
+          }
+        }).catch(err => {
+          this.loginCodeSending = false
+          this.$message.error(err.message || '验证码发送失败')
+        })
+      })
+    },
+    sendRegisterCode() {
+      // 先验证邮箱字段
+      this.$refs.registerForm.validateField('email', (errorMessage) => {
+        if (errorMessage) {
+          return
+        }
+
+        this.registerCodeSending = true
+        sendEmailCode(this.registerForm.email, 'register').then(res => {
+          this.registerCodeSending = false
+          if (res.success) {
+            this.$message.success(res.message || '验证码已发送，请查收邮件')
+            // 开始倒计时
+            this.registerCodeCountdown = 60
+            this.registerCodeTimer = setInterval(() => {
+              this.registerCodeCountdown--
+              if (this.registerCodeCountdown <= 0) {
+                clearInterval(this.registerCodeTimer)
+                this.registerCodeTimer = null
+              }
+            }, 1000)
+          } else {
+            this.$message.error(res.message || '验证码发送失败')
+          }
+        }).catch(err => {
+          this.registerCodeSending = false
+          this.$message.error(err.message || '验证码发送失败')
+        })
       })
     },
     handleRegister() {
@@ -294,15 +523,24 @@ export default {
             return
           }
           this.loading = true
-          // 模拟注册请求
-          setTimeout(() => {
+          register({
+            username: this.registerForm.username,
+            email: this.registerForm.email,
+            password: this.registerForm.password,
+            code: this.registerForm.code
+          }).then(res => {
             this.loading = false
-            this.$message.success('注册成功！')
+            this.$message.success(res.message || '注册成功！')
             // 注册成功后切换到登录表单
             this.switchToLogin()
             // 填充注册的用户名
             this.loginForm.username = this.registerForm.username
-          }, 1000)
+            // 重置注册表单
+            this.$refs.registerForm.resetFields()
+          }).catch(err => {
+            this.loading = false
+            this.$message.error(err.message || '注册失败')
+          })
         }
       })
     }
@@ -701,7 +939,6 @@ export default {
   border: 1px solid var(--border-color);
   border-radius: 14px;
   padding: 6px;
-  margin-bottom: 20px;
   flex-shrink: 0;
   box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.2);
   max-width: 480px;
@@ -816,6 +1053,71 @@ export default {
 
   ::v-deep .el-input {
     flex: 1;
+  }
+}
+
+// 验证码输入框样式
+.code-input-wrapper {
+  flex: 1;
+  display: flex;
+  gap: 10px;
+  align-items: center;
+
+  ::v-deep .el-input {
+    flex: 1;
+  }
+
+  .code-btn {
+    flex-shrink: 0;
+    height: 44px;
+    padding: 0 16px;
+    border-radius: 11px;
+    font-size: 13px;
+    font-weight: 500;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1.5px solid var(--border-color);
+    color: var(--text-primary);
+    transition: all 0.3s ease;
+    white-space: nowrap;
+    min-width: 100px;
+
+    &:hover:not(:disabled) {
+      background: rgba(255, 255, 255, 0.12);
+      border-color: var(--primary-color);
+      color: var(--primary-color);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(45, 91, 255, 0.2);
+    }
+
+    &:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+  }
+}
+
+// 登录方式切换
+.login-switch {
+  text-align: center;
+  margin-top: 16px;
+
+  .switch-link {
+    color: var(--text-secondary);
+    font-size: 13px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+
+    i {
+      font-size: 14px;
+    }
+
+    &:hover {
+      color: var(--primary-color);
+      text-decoration: underline;
+    }
   }
 }
 
@@ -977,7 +1279,7 @@ export default {
   background: linear-gradient(135deg, #2D5BFF 0%, #4E7FFF 100%) !important;
   border: none !important;
   border-radius: 12px;
-  transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
   position: relative;
   overflow: hidden;
   font-family: 'Outfit', sans-serif;
@@ -1013,10 +1315,10 @@ export default {
   }
 
   &:hover {
-    transform: translateY(-2px) scale(1.005);
+    transform: translateY(-1px);
     background: linear-gradient(135deg, #4E7FFF 0%, #2D5BFF 100%) !important;
-    box-shadow: 0 12px 35px rgba(45, 91, 255, 0.6),
-                0 4px 15px rgba(45, 91, 255, 0.4),
+    box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
+                0 4px 12px rgba(45, 91, 255, 0.35),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
 
     &::before {
@@ -1025,12 +1327,18 @@ export default {
   }
 
   &:active {
-    transform: translateY(0px) scale(0.98);
-    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.5);
+    transform: translateY(0);
+    transition: all 0.1s ease;
+    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.5),
+                inset 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   &:focus {
     outline: none;
+    transform: translateY(-1px);
+    box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
+                0 4px 12px rgba(45, 91, 255, 0.35),
+                inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }
 

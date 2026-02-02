@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="me.zhengjie.modules.system.mapper.EmailVerifyCodeMapper">
+
+    <delete id="deleteExpiredCodes">
+        DELETE FROM sys_email_verify_code
+        WHERE create_time &lt; #{beforeTime}
+    </delete>
+
+</mapper>

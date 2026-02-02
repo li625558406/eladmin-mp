@@ -34,8 +34,11 @@ import me.zhengjie.modules.security.config.SecurityProperties;
 import me.zhengjie.modules.security.security.TokenProvider;
 import me.zhengjie.modules.security.service.UserDetailsServiceImpl;
 import me.zhengjie.modules.security.service.dto.AuthUserDto;
+import me.zhengjie.modules.security.service.dto.EmailAuthUserDto;
 import me.zhengjie.modules.security.service.dto.JwtUserDto;
 import me.zhengjie.modules.security.service.OnlineUserService;
+import me.zhengjie.modules.system.service.EmailVerifyCodeService;
+import me.zhengjie.modules.system.service.UserService;
 import me.zhengjie.utils.RsaUtils;
 import me.zhengjie.utils.RedisUtils;
 import me.zhengjie.utils.SecurityUtils;
@@ -74,6 +77,8 @@ public class AuthController {
     private final LoginProperties loginProperties;
     private final PasswordEncoder passwordEncoder;
     private final UserDetailsServiceImpl userDetailsService;
+    private final EmailVerifyCodeService emailVerifyCodeService;
+    private final UserService userService;
 
     @Log("用户登录")
     @ApiOperation("登录授权")
@@ -150,5 +155,58 @@ public class AuthController {
         String token = tokenProvider.getToken(request);
         onlineUserService.logout(token);
         return new ResponseEntity<>(HttpStatus.OK);
+    }
+
+    @Log("邮箱验证码登录")
+    @ApiOperation("邮箱验证码登录")
+    @AnonymousPostMapping(value = "/email-login")
+    public ResponseEntity<Object> emailLogin(@Validated @RequestBody EmailAuthUserDto emailAuthUser, HttpServletRequest request) {
+        // 验证邮箱验证码
+        boolean codeValid = emailVerifyCodeService.verifyCode(
+            emailAuthUser.getEmail(), 
+            emailAuthUser.getCode(), 
+            "login"
+        );
+        
+        if (!codeValid) {
+            throw new BadRequestException("验证码错误或已过期");
+        }
+
+        // 根据邮箱查询用户
+        me.zhengjie.modules.system.domain.User user = userService.findByEmail(emailAuthUser.getEmail());
+        if (user == null) {
+            throw new BadRequestException("该邮箱未注册");
+        }
+
+        // 获取用户信息
+        JwtUserDto jwtUser = userDetailsService.loadUserByUsername(user.getUsername());
+        
+        // 检查用户状态
+        if (!jwtUser.isEnabled()) {
+            throw new BadRequestException("账号已被禁用");
+        }
+
+        Authentication authentication = new UsernamePasswordAuthenticationToken(jwtUser, null, jwtUser.getAuthorities());
+        SecurityContextHolder.getContext().setAuthentication(authentication);
+        
+        // 生成令牌
+        String token = tokenProvider.createToken(jwtUser);
+        
+        // 返回 token 与 用户信息
+        Map<String, Object> authInfo = new HashMap<String, Object>(2) {{
+            put("token", properties.getTokenStartWith() + token);
+            put("user", jwtUser);
+        }};
+        
+        if (loginProperties.isSingleLogin()) {
+            // 踢掉之前已经登录的token
+            onlineUserService.kickOutForUsername(user.getUsername());
+        }
+        
+        // 保存在线信息
+        onlineUserService.save(jwtUser, token, request);
+        
+        // 返回登录信息
+        return ResponseEntity.ok(authInfo);
     }
 }

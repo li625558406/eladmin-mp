@@ -28,6 +28,27 @@ spring:
     redis:
       repositories:
         enabled: false
+  # 邮件配置
+  mail:
+    host: smtp.163.com
+    username: leekone_lee_ai@163.com
+    password: GWwpZ7tmVj9H6urR # 注意是授权码，不是密码
+    default-encoding: UTF-8
+    port: 465
+    protocol: smtp
+    properties:
+      mail:
+        smtp:
+          auth: true
+          ssl:
+            enable: true
+          socketFactory:
+            class: javax.net.ssl.SSLSocketFactory
+            port: 465
+            fallback: false
+          timeout: 5000
+          connectiontimeout: 5000
+        debug: false
 #  pid:
 #    file: /自行指定位置/eladmin.pid
 

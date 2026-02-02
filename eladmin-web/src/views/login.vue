@@ -48,11 +48,14 @@ import { getCodeImg } from '@/api/login'
 import Cookies from 'js-cookie'
 import qs from 'qs'
 import Background from '@/assets/images/background.jpeg'
+import { ADMIN_BASE_PATH } from '@/config/paths'
+
 export default {
   name: 'Login',
   data() {
     return {
       Background: Background,
+      adminBasePath: ADMIN_BASE_PATH,
       codeUrl: '',
       cookiePass: '',
       loginForm: {
@@ -140,7 +143,8 @@ export default {
           }
           this.$store.dispatch('Login', user).then(() => {
             this.loading = false
-            this.$router.push({ path: this.redirect || '/' })
+            // 登录成功后跳转到后台管理系统首页
+            this.$router.push({ path: this.redirect || this.adminBasePath })
           }).catch(() => {
             this.loading = false
             this.getCode()

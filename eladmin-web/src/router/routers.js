@@ -1,27 +1,31 @@
 import Vue from 'vue'
 import Router from 'vue-router'
 import Layout from '../layout/index'
+import { ADMIN_BASE_PATH } from '@/config/paths'
 
 Vue.use(Router)
 
+// 导出后台管理系统的路径前缀，供其他模块使用
+export { ADMIN_BASE_PATH }
+
 export const constantRouterMap = [
-  { path: '/login',
+  { path: ADMIN_BASE_PATH + '/login',
     meta: { title: '登录', noCache: true },
     component: (resolve) => require(['@/views/login'], resolve),
     hidden: true
   },
   {
-    path: '/404',
+    path: ADMIN_BASE_PATH + '/404',
     component: (resolve) => require(['@/views/features/404'], resolve),
     hidden: true
   },
   {
-    path: '/401',
+    path: ADMIN_BASE_PATH + '/401',
     component: (resolve) => require(['@/views/features/401'], resolve),
     hidden: true
   },
   {
-    path: '/redirect',
+    path: ADMIN_BASE_PATH + '/redirect',
     component: Layout,
     hidden: true,
     children: [
@@ -32,9 +36,9 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/',
+    path: ADMIN_BASE_PATH,
     component: Layout,
-    redirect: '/dashboard',
+    redirect: ADMIN_BASE_PATH + '/dashboard',
     children: [
       {
         path: 'dashboard',
@@ -45,7 +49,7 @@ export const constantRouterMap = [
     ]
   },
   {
-    path: '/user',
+    path: ADMIN_BASE_PATH + '/user',
     component: Layout,
     hidden: true,
     redirect: 'noredirect',
@@ -57,6 +61,12 @@ export const constantRouterMap = [
         meta: { title: '个人中心' }
       }
     ]
+  },
+  // 根路径保留给用户端使用
+  {
+    path: '/',
+    component: (resolve) => require(['@/views/user-portal'], resolve),
+    meta: { title: 'ELADMIN - 用户端', noCache: true }
   }
 ]
 

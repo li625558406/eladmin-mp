@@ -13,7 +13,7 @@
         <ul class="list-unstyled">
           <li>或者你可以去:</li>
           <li class="link-type">
-            <router-link to="/dashboard">
+            <router-link :to="adminPaths.DASHBOARD">
               回首页
             </router-link>
           </li>
@@ -28,18 +28,20 @@
 
 <script>
 import errGif from '@/assets/401_images/401.gif'
+import { ADMIN_PATHS } from '@/config/paths'
 
 export default {
   name: 'Page401',
   data() {
     return {
-      errGif: errGif + '?' + +new Date()
+      errGif: errGif + '?' + +new Date(),
+      adminPaths: ADMIN_PATHS
     }
   },
   methods: {
     back() {
       if (this.$route.query.noGoBack) {
-        this.$router.push({ path: '/dashboard' })
+        this.$router.push({ path: this.adminPaths.DASHBOARD })
       } else {
         this.$router.go(-1)
       }

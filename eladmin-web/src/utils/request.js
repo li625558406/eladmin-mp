@@ -1,5 +1,5 @@
 import axios from 'axios'
-import router from '@/router/routers'
+import router, { ADMIN_BASE_PATH } from '@/router/routers'
 import { Notification } from 'element-ui'
 import store from '../store'
 import { getToken } from '@/utils/auth'
@@ -65,7 +65,7 @@ service.interceptors.response.use(
             location.reload()
           })
         } else if (code === 403) {
-          router.push({ path: '/401' })
+          router.push({ path: ADMIN_BASE_PATH + '/401' })
         } else {
           const errorMsg = error.response.data.message
           if (errorMsg !== undefined) {

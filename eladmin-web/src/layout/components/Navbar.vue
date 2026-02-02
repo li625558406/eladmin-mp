@@ -33,7 +33,7 @@
               布局设置
             </el-dropdown-item>
           </span>
-          <router-link to="/user/center">
+          <router-link :to="adminPaths.USER_CENTER">
             <el-dropdown-item>
               个人中心
             </el-dropdown-item>
@@ -58,6 +58,7 @@ import Screenfull from '@/components/Screenfull'
 import SizeSelect from '@/components/SizeSelect'
 import Search from '@/components/HeaderSearch'
 import Avatar from '@/assets/images/avatar.png'
+import { ADMIN_PATHS } from '@/config/paths'
 
 export default {
   components: {
@@ -71,7 +72,8 @@ export default {
   data() {
     return {
       Avatar: Avatar,
-      dialogVisible: false
+      dialogVisible: false,
+      adminPaths: ADMIN_PATHS
     }
   },
   computed: {

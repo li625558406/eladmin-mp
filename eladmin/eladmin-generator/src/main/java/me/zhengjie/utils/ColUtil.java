@@ -29,7 +29,7 @@ public class ColUtil {
     private static final Logger log = LoggerFactory.getLogger(ColUtil.class);
 
     /**
-     * 转换mysql数据类型为java数据类型
+     * 转换数据库数据类型为java数据类型
      *
      * @param type 数据库字段类型
      * @return String

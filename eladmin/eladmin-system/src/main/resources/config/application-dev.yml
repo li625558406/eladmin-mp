@@ -4,7 +4,7 @@ spring:
     druid:
       db-type: com.alibaba.druid.pool.DruidDataSource
       driverClassName: com.p6spy.engine.spy.P6SpyDriver
-      url: jdbc:p6spy:mysql://192.168.2.7:3306/konus_db?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
+      url: jdbc:p6spy:postgresql://192.168.2.7:5432/konus_db?serverTimezone=Asia/Shanghai&characterEncoding=utf8&useSSL=false
       username: konus
       password: LGligang12345
       # 初始连接数，建议设置为与最小空闲连接数相同

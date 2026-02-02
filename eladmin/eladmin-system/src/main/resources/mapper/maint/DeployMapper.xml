@@ -58,7 +58,7 @@
         <include refid="Where_sql"/>
         order by deploy.deploy_id desc
         <if test="criteria.offset != null">
-            limit #{criteria.offset}, #{criteria.size}
+            limit #{criteria.size} offset #{criteria.offset}
         </if>
         ) t
         left join mnt_deploy_server mds on t.d_deploy_id = mds.deploy_id

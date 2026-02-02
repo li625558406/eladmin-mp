@@ -70,7 +70,10 @@ public enum DataTypeEnum {
     HANA("sap", "sap hana", "com.sap.db.jdbc.Driver", "", "", "'", "'"),
 
     /** impala */
-    IMPALA("impala", "impala", "com.cloudera.impala.jdbc41.Driver", "", "", "'", "'");
+    IMPALA("impala", "impala", "com.cloudera.impala.jdbc41.Driver", "", "", "'", "'"),
+
+    /** postgresql */
+    POSTGRESQL("postgresql", "postgresql", "org.postgresql.Driver", "\"", "\"", "\"", "\"");
 
     private String feature;
     private String desc;

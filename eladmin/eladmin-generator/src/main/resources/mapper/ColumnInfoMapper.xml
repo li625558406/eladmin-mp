@@ -22,9 +22,9 @@
     </sql>
 
     <select id="getTables" resultType="me.zhengjie.domain.dto.TableInfo">
-        select table_name, create_time, engine, table_collation as coding, table_comment as remark
+        select table_name, create_time, table_comment as remark
         from information_schema.tables
-        where table_schema = (select database())
+        where table_schema = current_database()
         and table_name like concat('%',#{tableName},'%')
         order by create_time desc
     </select>
@@ -38,12 +38,12 @@
     </select>
 
     <select id="getColumns" resultMap="BaseResultMap">
-        select column_name, if(is_nullable = 'NO', 1, 0) not_null,
+        select column_name, CASE WHEN is_nullable = 'NO' THEN 1 ELSE 0 END as not_null,
                data_type as column_type, column_comment as remark,
-               column_key key_type, extra
+               column_key as key_type, extra
         from information_schema.columns
         where table_name = #{tableName}
-        and table_schema = (select database())
+        and table_schema = current_database()
         order by ordinal_position
     </select>
 </mapper>

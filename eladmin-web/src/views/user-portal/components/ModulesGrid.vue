@@ -267,8 +267,8 @@ export default {
     height: 180px;
     border-radius: 12px;
     overflow: hidden;
-    background: #f3f5ff;
-    border: 1px solid #e8ecf3;
+    background: transparent;
+    border: none;
 
     img {
       width: 100%;

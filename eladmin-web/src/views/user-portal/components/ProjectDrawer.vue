@@ -25,18 +25,13 @@
         <div v-if="isBanana && project.image_url" class="drawer-cover" @click="previewVisible = true">
           <img :src="project.image_url" :alt="project.title || ''">
         </div>
-        <p class="drawer-desc">{{ project.description }}</p>
         <div v-if="isBanana && project.tags && project.tags.length" class="drawer-tags">
           <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
         </div>
         <div
-          v-if="isBanana && (project.prompt_id || project.category || project.model)"
+          v-if="isBanana && (project.category || project.model)"
           class="info-list"
         >
-          <div v-if="project.prompt_id" class="info-item">
-            <span class="label">编号</span>
-            <span class="value">{{ project.prompt_id }}</span>
-          </div>
           <div v-if="project.category" class="info-item">
             <span class="label">分类</span>
             <span class="value">{{ project.category }}</span>
@@ -73,7 +68,7 @@
             <h4>Prompt (EN)</h4>
             <button class="copy-btn" @click="copyText(project.prompt_en)">复制</button>
           </div>
-          <p class="prompt-text">{{ project.prompt_en }}</p>
+          <p class="prompt-text full-text">{{ project.prompt_en }}</p>
         </div>
 
         <div v-if="isBanana && project.prompt_zh" class="drawer-section">
@@ -81,7 +76,7 @@
             <h4>Prompt (中文)</h4>
             <button class="copy-btn" @click="copyText(project.prompt_zh)">复制</button>
           </div>
-          <p class="prompt-text">{{ project.prompt_zh }}</p>
+          <p class="prompt-text full-text">{{ project.prompt_zh }}</p>
         </div>
 
         <div v-if="project.repo_url" class="drawer-action">
@@ -91,9 +86,9 @@
     </div>
     <el-dialog
       :visible.sync="previewVisible"
-      width="70%"
       custom-class="image-preview-dialog"
       :append-to-body="true"
+      :show-close="false"
     >
       <img v-if="project && project.image_url" class="preview-image" :src="project.image_url" :alt="project.title || ''">
     </el-dialog>
@@ -243,7 +238,6 @@ export default {
   border-radius: 12px;
   overflow: hidden;
   border: 1px solid #eef1f7;
-  background: #ffffff;
   cursor: zoom-in;
 
   img {
@@ -387,15 +381,43 @@ export default {
 }
 
 ::v-deep .image-preview-dialog {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &.el-dialog {
+    background: transparent !important;
+    box-shadow: none !important;
+    width: 0;
+    max-width: 0vw;
+  }
+
+  .el-dialog {
+    margin: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .el-dialog__header {
+    padding: 0;
+    height: 0;
+    display: none;
+  }
+
   .el-dialog__body {
-    padding: 16px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
   }
 }
 
 .preview-image {
-  width: 100%;
+  width: auto;
+  max-width: 70vw;
   height: auto;
-  max-height: 80vh;
+  max-height: 70vh;
   object-fit: contain;
   display: block;
 }

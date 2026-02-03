@@ -89,8 +89,17 @@
       custom-class="image-preview-dialog"
       :append-to-body="true"
       :show-close="false"
+      @opened="resetZoom"
     >
-      <img v-if="project && project.image_url" class="preview-image" :src="project.image_url" :alt="project.title || ''">
+      <div class="preview-container" @wheel.prevent="handleWheel">
+        <img
+          v-if="project && project.image_url"
+          class="preview-image"
+          :src="project.image_url"
+          :alt="project.title || ''"
+          :style="{ transform: `scale(${zoomLevel})` }"
+        >
+      </div>
     </el-dialog>
   </el-drawer>
 </template>
@@ -126,7 +135,8 @@ export default {
   },
   data() {
     return {
-      previewVisible: false
+      previewVisible: false,
+      zoomLevel: 1
     }
   },
   computed: {
@@ -143,6 +153,22 @@ export default {
     }
   },
   methods: {
+    resetZoom() {
+      this.zoomLevel = 1
+    },
+    zoomIn() {
+      this.zoomLevel = Math.min(3, this.zoomLevel + 0.1)
+    },
+    zoomOut() {
+      this.zoomLevel = Math.max(0.3, this.zoomLevel - 0.1)
+    },
+    handleWheel(event) {
+      if (event.deltaY < 0) {
+        this.zoomIn()
+      } else {
+        this.zoomOut()
+      }
+    },
     async copyText(text) {
       if (!text) {
         return

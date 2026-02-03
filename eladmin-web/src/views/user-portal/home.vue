@@ -65,6 +65,7 @@
                 :items="filteredProjects"
                 :format-number="formatNumber"
                 :format-period-label="formatPeriodLabel"
+                :variant="activeTagId"
                 @select="openProjectDetail"
               />
 
@@ -87,6 +88,7 @@
       :project="selectedProject"
       :format-number="formatNumber"
       :format-period-label="formatPeriodLabel"
+      :variant="activeTagId"
     />
   </div>
 </template>
@@ -233,6 +235,30 @@ export default {
         return tag
       })
     },
+    truncateText(text, limit) {
+      if (!text) {
+        return ''
+      }
+      const normalized = String(text).replace(/\s+/g, ' ').trim()
+      if (normalized.length <= limit) {
+        return normalized
+      }
+      return normalized.slice(0, limit) + '...'
+    },
+    extractPromptParts(promptText) {
+      if (!promptText) {
+        return { en: '', zh: '' }
+      }
+      const raw = String(promptText)
+      if (raw.includes('---')) {
+        const [enPart, zhPart] = raw.split('---')
+        return {
+          en: enPart.trim(),
+          zh: zhPart.trim()
+        }
+      }
+      return { en: raw.trim(), zh: '' }
+    },
     async fetchProjects({ reset = false } = {}) {
       const state = this.githubState
       if (reset) {
@@ -277,21 +303,34 @@ export default {
       const imageUrl = item.image_path
         ? `http://localhost:8000/ai/${item.image_path.replace(/^\/+/, '')}`
         : ''
+      const promptParts = this.extractPromptParts(item.prompt_text)
       const model = item.extra_data && item.extra_data.model
+      const tags = Array.isArray(item.tags) ? item.tags : []
+      const source = item.extra_data && item.extra_data.source
       return {
         id: item.id || item.prompt_id,
         repo_name: item.prompt_id ? `Prompt #${item.prompt_id}` : item.title,
+        prompt_id: item.prompt_id,
+        category: item.category,
+        model,
         title: item.title,
         description: item.description || item.prompt_text,
+        short_description: this.truncateText(item.description || item.prompt_text, 120),
         language: model || item.category,
         stars: 0,
         forks: 0,
         trend_period: 'banana',
         created_at: item.created_at,
+        updated_at: item.updated_at,
         analysis_data: {
           category: item.category
         },
         image_url: imageUrl,
+        tags,
+        source_name: source ? source.name : '',
+        source_url: source ? source.url : '',
+        prompt_en: promptParts.en,
+        prompt_zh: promptParts.zh,
         prompt_text: item.prompt_text,
         repo_url: ''
       }

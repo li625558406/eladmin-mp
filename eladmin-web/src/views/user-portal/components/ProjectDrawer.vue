@@ -22,8 +22,32 @@
       </div>
 
       <div v-else-if="project" class="drawer-body">
+        <div v-if="isBanana && project.image_url" class="drawer-cover" @click="previewVisible = true">
+          <img :src="project.image_url" :alt="project.title || ''">
+        </div>
         <p class="drawer-desc">{{ project.description }}</p>
-        <div class="drawer-meta">
+        <div v-if="isBanana && project.tags && project.tags.length" class="drawer-tags">
+          <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
+        </div>
+        <div
+          v-if="isBanana && (project.prompt_id || project.category || project.model)"
+          class="info-list"
+        >
+          <div v-if="project.prompt_id" class="info-item">
+            <span class="label">编号</span>
+            <span class="value">{{ project.prompt_id }}</span>
+          </div>
+          <div v-if="project.category" class="info-item">
+            <span class="label">分类</span>
+            <span class="value">{{ project.category }}</span>
+          </div>
+          <div v-if="project.model" class="info-item">
+            <span class="label">模型</span>
+            <span class="value">{{ project.model }}</span>
+          </div>
+        </div>
+
+        <div v-if="!isBanana" class="drawer-meta">
           <span class="meta-chip">语言：{{ project.language || '未知' }}</span>
           <span class="meta-chip">星标：{{ formatNumber(project.stars) }}</span>
           <span class="meta-chip">Fork：{{ formatNumber(project.forks) }}</span>
@@ -44,11 +68,35 @@
           </ul>
         </div>
 
+        <div v-if="isBanana && project.prompt_en" class="drawer-section">
+          <div class="section-header">
+            <h4>Prompt (EN)</h4>
+            <button class="copy-btn" @click="copyText(project.prompt_en)">复制</button>
+          </div>
+          <p class="prompt-text">{{ project.prompt_en }}</p>
+        </div>
+
+        <div v-if="isBanana && project.prompt_zh" class="drawer-section">
+          <div class="section-header">
+            <h4>Prompt (中文)</h4>
+            <button class="copy-btn" @click="copyText(project.prompt_zh)">复制</button>
+          </div>
+          <p class="prompt-text">{{ project.prompt_zh }}</p>
+        </div>
+
         <div v-if="project.repo_url" class="drawer-action">
           <a :href="project.repo_url" target="_blank" rel="noopener noreferrer">访问 GitHub</a>
         </div>
       </div>
     </div>
+    <el-dialog
+      :visible.sync="previewVisible"
+      width="70%"
+      custom-class="image-preview-dialog"
+      :append-to-body="true"
+    >
+      <img v-if="project && project.image_url" class="preview-image" :src="project.image_url" :alt="project.title || ''">
+    </el-dialog>
   </el-drawer>
 </template>
 
@@ -75,6 +123,15 @@ export default {
     formatPeriodLabel: {
       type: Function,
       required: true
+    },
+    variant: {
+      type: String,
+      default: 'github'
+    }
+  },
+  data() {
+    return {
+      previewVisible: false
     }
   },
   computed: {
@@ -84,6 +141,31 @@ export default {
       },
       set(value) {
         this.$emit('update:visible', value)
+      }
+    },
+    isBanana() {
+      return this.variant === 'banana'
+    }
+  },
+  methods: {
+    async copyText(text) {
+      if (!text) {
+        return
+      }
+      try {
+        await navigator.clipboard.writeText(text)
+        this.$message && this.$message.success('已复制')
+      } catch (error) {
+        const textarea = document.createElement('textarea')
+        textarea.value = text
+        textarea.setAttribute('readonly', '')
+        textarea.style.position = 'absolute'
+        textarea.style.left = '-9999px'
+        document.body.appendChild(textarea)
+        textarea.select()
+        document.execCommand('copy')
+        document.body.removeChild(textarea)
+        this.$message && this.$message.success('已复制')
       }
     }
   }
@@ -155,9 +237,43 @@ export default {
   gap: 18px;
 }
 
+.drawer-cover {
+  width: 100%;
+  max-height: 220px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid #eef1f7;
+  background: #ffffff;
+  cursor: zoom-in;
+
+  img {
+    width: 100%;
+    height: auto;
+    max-height: 220px;
+    object-fit: contain;
+    display: block;
+  }
+}
+
 .drawer-desc {
   color: #475467;
   line-height: 1.7;
+}
+
+.drawer-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+
+  .tag {
+    font-size: 11px;
+    padding: 4px 10px;
+    background: #f2f4f8;
+    border: 1px solid #e6eaf2;
+    color: #7a869a;
+    border-radius: 999px;
+    font-weight: 600;
+  }
 }
 
 .drawer-meta {
@@ -174,6 +290,42 @@ export default {
   border-radius: 999px;
   font-size: 12px;
   font-weight: 600;
+}
+
+.info-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 8px 16px;
+  padding: 12px;
+  border-radius: 12px;
+  background: #f9fafc;
+  border: 1px solid #eef1f7;
+}
+
+.info-item {
+  display: flex;
+  gap: 8px;
+  font-size: 12px;
+  color: #6b7280;
+
+  .label {
+    color: #98a2b3;
+    min-width: 60px;
+  }
+
+  .value {
+    color: #475467;
+    word-break: break-word;
+  }
+
+  .link {
+    color: #5b5bf6;
+    text-decoration: none;
+  }
+
+  .link:hover {
+    text-decoration: underline;
+  }
 }
 
 .drawer-section {
@@ -201,6 +353,51 @@ export default {
     color: #5d6472;
     line-height: 1.6;
   }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.copy-btn {
+  border: 1px solid #e6eaf2;
+  background: #ffffff;
+  color: #475467;
+  border-radius: 8px;
+  padding: 4px 10px;
+  font-size: 12px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    border-color: #ffd2a6;
+    color: #1f2a44;
+  }
+}
+
+.prompt-text {
+  margin: 0;
+  color: #5d6472;
+  line-height: 1.6;
+  white-space: pre-line;
+}
+
+::v-deep .image-preview-dialog {
+  .el-dialog__body {
+    padding: 16px;
+  }
+}
+
+.preview-image {
+  width: 100%;
+  height: auto;
+  max-height: 80vh;
+  object-fit: contain;
+  display: block;
 }
 
 .drawer-action {

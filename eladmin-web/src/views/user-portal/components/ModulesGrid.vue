@@ -1,38 +1,69 @@
 <template>
-  <div class="modules-grid">
+  <div class="modules-grid" :class="variant">
     <div
       v-for="project in items"
       :key="project.id"
       class="module-card"
+      :class="variant"
       @click="$emit('select', project)"
     >
-      <div class="card-icon">
-        <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
-        <i v-else class="el-icon-star-on" />
-      </div>
-      <div class="card-body">
-        <div class="card-top">
-          <div class="card-title-group">
-            <h3 class="card-title">{{ project.title }}</h3>
-            <p class="card-desc">{{ project.description }}</p>
-          </div>
-          <div class="card-badges">
-            <span class="badge hot">{{ formatPeriodLabel(project.trend_period) }}</span>
+      <template v-if="variant === 'banana'">
+        <div class="card-cover">
+          <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
+          <div v-else class="cover-placeholder">
+            <i class="el-icon-picture-outline" />
           </div>
         </div>
-        <div class="card-footer">
+        <div class="card-body">
+          <h3 class="card-title">{{ project.title }}</h3>
+          <p class="card-desc">{{ project.short_description || project.description }}</p>
           <div class="card-tags">
-            <span v-if="project.analysis_data && project.analysis_data.category" class="tag">
-              {{ project.analysis_data.category }}
+            <span
+              v-for="tag in (project.tags || [])"
+              :key="tag"
+              class="tag"
+            >
+              {{ tag }}
             </span>
-            <span v-if="project.language" class="tag">{{ project.language }}</span>
-          </div>
-          <div class="card-meta">
-            <span>★ {{ formatNumber(project.stars) }}</span>
-            <span>⑂ {{ formatNumber(project.forks) }}</span>
           </div>
         </div>
-      </div>
+      </template>
+      <template v-else>
+        <div class="card-icon">
+          <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
+          <i v-else class="el-icon-star-on" />
+        </div>
+        <div class="card-body">
+          <div class="card-top">
+            <div class="card-title-group">
+              <h3 class="card-title">{{ project.title }}</h3>
+              <p class="card-desc">{{ project.short_description || project.description }}</p>
+            </div>
+            <div class="card-badges">
+              <span class="badge hot">{{ formatPeriodLabel(project.trend_period) }}</span>
+            </div>
+          </div>
+          <div class="card-footer">
+            <div class="card-tags">
+              <span
+                v-for="tag in (project.tags || []).slice(0, 3)"
+                :key="tag"
+                class="tag"
+              >
+                {{ tag }}
+              </span>
+              <span v-if="project.analysis_data && project.analysis_data.category" class="tag">
+                {{ project.analysis_data.category }}
+              </span>
+              <span v-if="project.language" class="tag">{{ project.language }}</span>
+            </div>
+            <div class="card-meta">
+              <span>★ {{ formatNumber(project.stars) }}</span>
+              <span>⑂ {{ formatNumber(project.forks) }}</span>
+            </div>
+          </div>
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -44,6 +75,10 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    variant: {
+      type: String,
+      default: 'github'
     },
     formatNumber: {
       type: Function,
@@ -93,9 +128,9 @@ export default {
     }
 
     .tag {
-      background: rgba(91, 91, 246, 0.12);
-      border-color: rgba(91, 91, 246, 0.2);
-      color: #ffd2a6;
+      background: #f2f4f8;
+      border-color: #e6eaf2;
+      color: #7a869a;
     }
   }
 
@@ -208,7 +243,7 @@ export default {
         color: #7a869a;
         border-radius: 5px;
         font-weight: 500;
-        transition: all 0.3s;
+        white-space: nowrap;
       }
     }
 
@@ -219,6 +254,83 @@ export default {
       color: #98a2b3;
       font-weight: 600;
     }
+  }
+}
+
+.module-card.banana {
+  flex-direction: column;
+  padding: 12px;
+  gap: 12px;
+
+  .card-cover {
+    width: 100%;
+    height: 180px;
+    border-radius: 12px;
+    overflow: hidden;
+    background: #f3f5ff;
+    border: 1px solid #e8ecf3;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .cover-placeholder {
+      width: 100%;
+      height: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #c7cdd8;
+      font-size: 32px;
+    }
+  }
+
+  .card-body {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .card-title {
+    font-size: 16px;
+  }
+
+  .card-desc {
+    margin: 0;
+    -webkit-line-clamp: 3;
+  }
+
+  .card-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+
+  .tag {
+    width: auto;
+    white-space: nowrap;
+    font-size: 12px;
+    padding: 4px 10px;
+    background: #f2f4f8;
+    border: 0;
+    color: #6b7280;
+    border-radius: 10px;
+    font-weight: 500;
+    line-height: 1;
+  }
+
+  .tag::before {
+    content: '#';
+    margin-right: 2px;
+    color: #9aa3b2;
+  }
+
+  .tag:hover {
+    background: #f2f4f8;
+    color: #6b7280;
   }
 }
 

@@ -1010,3 +1010,109 @@ COMMENT ON COLUMN sys_email_verify_code.used_time IS '使用时间';
 -- 创建索引
 CREATE INDEX idx_email_type ON sys_email_verify_code(email, type);
 CREATE INDEX idx_create_time ON sys_email_verify_code(create_time);
+
+-- GitHub 热门项目表（PostgreSQL 版本）
+CREATE TABLE IF NOT EXISTS github_trending_projects (
+    id BIGSERIAL PRIMARY KEY,
+    repo_name VARCHAR(500) NOT NULL,
+    title VARCHAR(500),
+    description TEXT,
+    original_description TEXT,
+    stars INTEGER,
+    forks INTEGER,
+    language VARCHAR(100),
+    repo_url VARCHAR(500),
+    trend_period VARCHAR(50) DEFAULT 'daily',
+    analysis_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE(repo_name, trend_period)
+);
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS idx_github_repo_name ON github_trending_projects(repo_name);
+CREATE INDEX IF NOT EXISTS idx_github_language ON github_trending_projects(language);
+CREATE INDEX IF NOT EXISTS idx_github_created_at ON github_trending_projects(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_github_stars ON github_trending_projects(stars DESC);
+
+-- 添加注释
+COMMENT ON TABLE github_trending_projects IS 'GitHub 热门项目';
+COMMENT ON COLUMN github_trending_projects.id IS '主键ID';
+COMMENT ON COLUMN github_trending_projects.repo_name IS '仓库名称（owner/repo）';
+COMMENT ON COLUMN github_trending_projects.title IS '项目标题（中文）';
+COMMENT ON COLUMN github_trending_projects.description IS '项目简介（中文）';
+COMMENT ON COLUMN github_trending_projects.original_description IS '原始英文描述';
+COMMENT ON COLUMN github_trending_projects.stars IS '星标数';
+COMMENT ON COLUMN github_trending_projects.forks IS 'Fork 数';
+COMMENT ON COLUMN github_trending_projects.language IS '主要编程语言';
+COMMENT ON COLUMN github_trending_projects.repo_url IS '仓库URL';
+COMMENT ON COLUMN github_trending_projects.trend_period IS '趋势周期';
+COMMENT ON COLUMN github_trending_projects.analysis_data IS 'AI分析的完整数据（JSONB）';
+COMMENT ON COLUMN github_trending_projects.created_at IS '创建时间';
+COMMENT ON COLUMN github_trending_projects.updated_at IS '更新时间';
+
+-- 插入 Google Gemini API Key 到数据字典
+DO $$
+DECLARE
+    v_dict_id BIGINT;
+BEGIN
+    -- 检查并插入字典
+    SELECT dict_id INTO v_dict_id FROM sys_dict WHERE name = 'ai_api_keys';
+    
+    IF v_dict_id IS NULL THEN
+        INSERT INTO sys_dict (name, description) 
+        VALUES ('ai_api_keys', 'AI服务API密钥')
+        RETURNING dict_id INTO v_dict_id;
+    END IF;
+    
+    -- 检查并插入字典详情
+    IF NOT EXISTS (
+        SELECT 1 FROM sys_dict_detail 
+        WHERE dict_id = v_dict_id
+        AND label = 'Google Gemini API Key'
+    ) THEN
+        INSERT INTO sys_dict_detail (dict_id, label, value, dict_sort) 
+        VALUES (v_dict_id, 'Google Gemini API Key', 'your-google-gemini-api-key-here', 1);
+    END IF;
+    
+    RAISE NOTICE 'AI API Keys 字典配置完成';
+END $$;
+
+
+-- GPT-4o Image Prompts 数据表（PostgreSQL）
+CREATE TABLE IF NOT EXISTS gpt4o_prompts (
+    id BIGSERIAL PRIMARY KEY,
+    prompt_id VARCHAR(255) UNIQUE,
+    title VARCHAR(500),
+    description TEXT,
+    prompt_text TEXT NOT NULL,
+    category VARCHAR(100),
+    tags TEXT[],
+    image_path VARCHAR(500),
+    extra_data JSONB,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+);
+
+-- 创建索引
+CREATE INDEX IF NOT EXISTS idx_prompts_title ON gpt4o_prompts USING gin(to_tsvector('english', title));
+CREATE INDEX IF NOT EXISTS idx_prompts_description ON gpt4o_prompts USING gin(to_tsvector('english', description));
+CREATE INDEX IF NOT EXISTS idx_prompts_prompt_text ON gpt4o_prompts USING gin(to_tsvector('english', prompt_text));
+CREATE INDEX IF NOT EXISTS idx_prompts_category ON gpt4o_prompts(category);
+CREATE INDEX IF NOT EXISTS idx_prompts_tags ON gpt4o_prompts USING gin(tags);
+CREATE INDEX IF NOT EXISTS idx_prompts_created_at ON gpt4o_prompts(created_at DESC);
+CREATE INDEX IF NOT EXISTS idx_prompts_extra_data ON gpt4o_prompts USING gin(extra_data);
+
+-- 添加注释
+COMMENT ON TABLE gpt4o_prompts IS 'GPT-4o 图像生成提示词';
+COMMENT ON COLUMN gpt4o_prompts.id IS '主键ID';
+COMMENT ON COLUMN gpt4o_prompts.prompt_id IS '提示词唯一标识';
+COMMENT ON COLUMN gpt4o_prompts.title IS '标题';
+COMMENT ON COLUMN gpt4o_prompts.description IS '描述';
+COMMENT ON COLUMN gpt4o_prompts.prompt_text IS '提示词内容';
+COMMENT ON COLUMN gpt4o_prompts.category IS '分类';
+COMMENT ON COLUMN gpt4o_prompts.tags IS '标签数组';
+COMMENT ON COLUMN gpt4o_prompts.image_path IS '示例图片相对路径';
+COMMENT ON COLUMN gpt4o_prompts.extra_data IS '完整JSON数据（JSONB）';
+COMMENT ON COLUMN gpt4o_prompts.created_at IS '创建时间';
+COMMENT ON COLUMN gpt4o_prompts.updated_at IS '更新时间';

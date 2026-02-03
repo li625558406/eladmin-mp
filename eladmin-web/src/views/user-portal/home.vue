@@ -79,7 +79,7 @@
 
               <!-- 模块卡片网格 -->
               <div v-else-if="groupedProjects.length > 0" class="modules-grid">
-                <div v-for="group in groupedProjects" :key="`group-${group.date}`">
+                <div v-for="group in groupedProjects" :key="`group-${group.date}`" class="modules-group">
                   <div class="date-divider">
                     <span>{{ group.date }}</span>
                   </div>
@@ -728,6 +728,10 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+}
+
+.modules-group {
+  display: contents;
 }
 
 .date-divider {

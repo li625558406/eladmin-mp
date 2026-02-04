@@ -61,17 +61,23 @@ public class DictServiceImpl extends ServiceImpl<DictMapper, Dict> implements Di
     @Transactional(rollbackFor = Exception.class)
     public void create(Dict resources) {
         save(resources);
+        // 清理缓存
+        delCaches(resources);
     }
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void update(Dict resources) {
-        // 清理缓存
-        delCaches(resources);
         Dict dict = getById(resources.getId());
+        String oldName = dict.getName();
         dict.setName(resources.getName());
         dict.setDescription(resources.getDescription());
         saveOrUpdate(dict);
+        // 清理缓存
+        if (!Objects.equals(oldName, dict.getName())) {
+            redisUtils.del(CacheKey.DICT_NAME + oldName);
+        }
+        redisUtils.del(CacheKey.DICT_NAME + dict.getName());
     }
 
     @Override

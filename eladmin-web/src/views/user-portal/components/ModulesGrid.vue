@@ -1,70 +1,121 @@
 <template>
   <div class="modules-grid" :class="variant">
-    <div
-      v-for="project in items"
-      :key="project.id"
-      class="module-card"
-      :class="variant"
-      @click="$emit('select', project)"
-    >
-      <template v-if="variant === 'banana'">
-        <div class="card-cover">
-          <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
-          <div v-else class="cover-placeholder">
-            <i class="el-icon-picture-outline" />
+    <template v-if="showDateDivider && groupedItems.length">
+      <div v-for="group in groupedItems" :key="`group-${group.date}`" class="group-wrapper">
+        <div class="date-divider">
+          <span>{{ group.date }}</span>
+        </div>
+        <div
+          v-for="project in group.items"
+          :key="project.id"
+          class="module-card"
+          :class="variant"
+          @click="$emit('select', project)"
+        >
+          <div class="card-icon">
+            <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
+            <i v-else class="el-icon-star-on" />
           </div>
-        </div>
-        <div class="card-body">
-          <h3 class="card-title">{{ project.title }}</h3>
-          <p class="card-desc">{{ project.short_description || project.description }}</p>
-          <div class="card-tags">
-            <span
-              v-for="tag in (project.tags || [])"
-              :key="tag"
-              class="tag"
-            >
-              {{ tag }}
-            </span>
-          </div>
-        </div>
-      </template>
-      <template v-else>
-        <div class="card-icon">
-          <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
-          <i v-else class="el-icon-star-on" />
-        </div>
-        <div class="card-body">
-          <div class="card-top">
-            <div class="card-title-group">
-              <h3 class="card-title">{{ project.title }}</h3>
-              <p class="card-desc">{{ project.short_description || project.description }}</p>
+          <div class="card-body">
+            <div class="card-top">
+              <div class="card-title-group">
+                <h3 class="card-title">{{ project.title }}</h3>
+                <p class="card-desc">{{ project.short_description || project.description }}</p>
+              </div>
+              <div class="card-badges">
+                <span class="badge hot">{{ formatPeriodLabel(project.trend_period) }}</span>
+              </div>
             </div>
-            <div class="card-badges">
-              <span class="badge hot">{{ formatPeriodLabel(project.trend_period) }}</span>
+            <div class="card-footer">
+              <div class="card-tags">
+                <span
+                  v-for="tag in (project.tags || []).slice(0, 3)"
+                  :key="tag"
+                  class="tag"
+                >
+                  {{ tag }}
+                </span>
+                <span v-if="project.analysis_data && project.analysis_data.category" class="tag">
+                  {{ project.analysis_data.category }}
+                </span>
+                <span v-if="project.language" class="tag">{{ project.language }}</span>
+              </div>
+              <div class="card-meta">
+                <span>★ {{ formatNumber(project.stars) }}</span>
+                <span>⑂ {{ formatNumber(project.forks) }}</span>
+              </div>
             </div>
           </div>
-          <div class="card-footer">
+        </div>
+      </div>
+    </template>
+    <template v-else>
+      <div
+        v-for="project in items"
+        :key="project.id"
+        class="module-card"
+        :class="variant"
+        @click="$emit('select', project)"
+      >
+        <template v-if="variant === 'banana'">
+          <div class="card-cover">
+            <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
+            <div v-else class="cover-placeholder">
+              <i class="el-icon-picture-outline" />
+            </div>
+          </div>
+          <div class="card-body">
+            <h3 class="card-title">{{ project.title }}</h3>
+            <p class="card-desc">{{ project.short_description || project.description }}</p>
             <div class="card-tags">
               <span
-                v-for="tag in (project.tags || []).slice(0, 3)"
+                v-for="tag in (project.tags || [])"
                 :key="tag"
                 class="tag"
               >
                 {{ tag }}
               </span>
-              <span v-if="project.analysis_data && project.analysis_data.category" class="tag">
-                {{ project.analysis_data.category }}
-              </span>
-              <span v-if="project.language" class="tag">{{ project.language }}</span>
-            </div>
-            <div class="card-meta">
-              <span>★ {{ formatNumber(project.stars) }}</span>
-              <span>⑂ {{ formatNumber(project.forks) }}</span>
             </div>
           </div>
-        </div>
-      </template>
-    </div>
+        </template>
+        <template v-else>
+          <div class="card-icon">
+            <img v-if="project.image_url" :src="project.image_url" alt="" loading="lazy">
+            <i v-else class="el-icon-star-on" />
+          </div>
+          <div class="card-body">
+            <div class="card-top">
+              <div class="card-title-group">
+                <h3 class="card-title">{{ project.title }}</h3>
+                <p class="card-desc">{{ project.short_description || project.description }}</p>
+              </div>
+              <div class="card-badges">
+                <span class="badge hot">{{ formatPeriodLabel(project.trend_period) }}</span>
+              </div>
+            </div>
+            <div class="card-footer">
+              <div class="card-tags">
+                <span
+                  v-for="tag in (project.tags || []).slice(0, 3)"
+                  :key="tag"
+                  class="tag"
+                >
+                  {{ tag }}
+                </span>
+                <span v-if="project.analysis_data && project.analysis_data.category" class="tag">
+                  {{ project.analysis_data.category }}
+                </span>
+                <span v-if="project.language" class="tag">{{ project.language }}</span>
+              </div>
+              <div class="card-meta">
+                <span>★ {{ formatNumber(project.stars) }}</span>
+                <span>⑂ {{ formatNumber(project.forks) }}</span>
+              </div>
+            </div>
+          </div>
+        </template>
+      </div>
+    </template>
   </div>
 </template>
 
@@ -75,6 +126,14 @@ export default {
     items: {
       type: Array,
       default: () => []
+    },
+    groupedItems: {
+      type: Array,
+      default: () => []
+    },
+    showDateDivider: {
+      type: Boolean,
+      default: false
     },
     variant: {
       type: String,
@@ -97,6 +156,29 @@ export default {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
   gap: 16px;
+}
+
+.group-wrapper {
+  display: contents;
+}
+
+.date-divider {
+  grid-column: 1 / -1;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 6px 0 4px;
+  color: #98a2b3;
+  font-size: 12px;
+  font-weight: 600;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e7ebf2;
+  }
 }
 
 .module-card {

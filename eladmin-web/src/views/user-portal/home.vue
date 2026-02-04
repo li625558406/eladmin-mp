@@ -61,6 +61,15 @@
 
               <!-- 模块卡片网格 -->
               <ModulesGrid
+                v-else-if="activeTagId === 'github' && groupedGithubProjects.length > 0"
+                :grouped-items="groupedGithubProjects"
+                :show-date-divider="true"
+                :format-number="formatNumber"
+                :format-period-label="formatPeriodLabel"
+                :variant="activeTagId"
+                @select="openProjectDetail"
+              />
+              <ModulesGrid
                 v-else-if="filteredProjects.length > 0"
                 :items="filteredProjects"
                 :format-number="formatNumber"
@@ -174,6 +183,20 @@ export default {
           category
         ].some(field => field && field.toLowerCase().includes(searchLower))
       })
+    },
+    groupedGithubProjects() {
+      if (this.activeTagId !== 'github') {
+        return []
+      }
+      const groups = new Map()
+      this.filteredProjects.forEach(project => {
+        const dateKey = this.formatDateOnly(project.created_at)
+        if (!groups.has(dateKey)) {
+          groups.set(dateKey, [])
+        }
+        groups.get(dateKey).push(project)
+      })
+      return Array.from(groups.entries()).map(([date, items]) => ({ date, items }))
     },
     emptyStateText() {
       if (this.activeTagId !== 'github') {
@@ -421,6 +444,19 @@ export default {
       }
       return num
     },
+    formatDateOnly(value) {
+      if (!value) {
+        return '未知日期'
+      }
+      const date = new Date(value)
+      if (Number.isNaN(date.getTime())) {
+        return '未知日期'
+      }
+      const year = date.getFullYear()
+      const month = String(date.getMonth() + 1).padStart(2, '0')
+      const day = String(date.getDate()).padStart(2, '0')
+      return `${year}-${month}-${day}`
+    },
     formatPeriodLabel(period) {
       const map = {
         daily: '日榜',
@@ -545,7 +581,7 @@ export default {
 
 // 主内容区
 .main-content {
-  padding: calc(var(--header-height) + 24px) 0 0 24px;
+  padding: calc(var(--header-height) + 24px) 0 0 85px;
   height: calc(100vh - var(--header-height));
   box-sizing: border-box;
 }

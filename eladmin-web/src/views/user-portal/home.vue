@@ -104,7 +104,7 @@
 
 <script>
 import { getGithubProjects, getGithubProjectDetail } from '@/api/ai/github'
-import { searchPromptList } from '@/api/ai/prompts'
+import { searchPromptList, getPromptStats } from '@/api/ai/prompts'
 import TagSidebar from './components/TagSidebar'
 import ModulesToolbar from './components/ModulesToolbar'
 import ModulesGrid from './components/ModulesGrid'
@@ -207,8 +207,18 @@ export default {
   },
   created() {
     this.fetchProjects({ reset: true })
+    this.fetchPromptStats()
   },
   methods: {
+    async fetchPromptStats() {
+      try {
+        const data = await getPromptStats()
+        const total = data && typeof data.total === 'number' ? data.total : 0
+        this.updateTagCount('banana', total)
+      } catch (error) {
+        // ignore stats failures to avoid blocking page
+      }
+    },
     selectTag(tagId) {
       this.activeTagId = tagId
       this.searchText = ''

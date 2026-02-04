@@ -7,3 +7,10 @@ export const searchPromptList = (params) => {
     params
   })
 }
+
+export const getPromptStats = () => {
+  return request({
+    url: '/ai/api/prompts/stats',
+    method: 'get'
+  })
+}

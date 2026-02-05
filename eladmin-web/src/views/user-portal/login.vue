@@ -558,22 +558,23 @@ export default {
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
 // CSS 变量定义
-:root {
-  --primary-color: #46A6FF;
-  --primary-dark: #2C86D6;
-  --primary-light: #7BC1FF;
-  --secondary-color: #FF6B9D;
-  --accent-color: #FFB800;
-  --success-color: #00D084;
-  --bg-primary: #0A0E27;
-  --bg-secondary: #151B3B;
-  --text-primary: #FFFFFF;
-  --text-secondary: #94A3B8;
+.auth-container {
+  --primary-color: #2563EB;
+  --primary-dark: #1D4ED8;
+  --primary-light: #3B82F6;
+  --secondary-color: #3B82F6;
+  --accent-color: #F97316;
+  --success-color: #22C55E;
+  --bg-primary: #F8FAFC;
+  --bg-secondary: #FFFFFF;
+  --bg-muted: #F1F5F9;
+  --text-primary: #1E293B;
+  --text-secondary: #475569;
   --text-muted: #64748B;
-  --border-color: rgba(255, 255, 255, 0.08);
-  --glass-bg: rgba(255, 255, 255, 0.03);
-  --glass-border: rgba(255, 255, 255, 0.12);
-  --shimmer-color: rgba(255, 255, 255, 0.1);
+  --border-color: #E2E8F0;
+  --glass-bg: #FFFFFF;
+  --glass-border: #E2E8F0;
+  --shimmer-color: rgba(37, 99, 235, 0.06);
 }
 
 * {
@@ -612,7 +613,7 @@ export default {
     &.shape-1 {
       width: 500px;
       height: 500px;
-      background: radial-gradient(circle, rgba(45, 91, 255, 0.3) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(37, 99, 235, 0.18) 0%, transparent 70%);
       top: -10%;
       left: -5%;
       animation-delay: 0s;
@@ -621,7 +622,7 @@ export default {
     &.shape-2 {
       width: 400px;
       height: 400px;
-      background: radial-gradient(circle, rgba(255, 107, 157, 0.25) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(59, 130, 246, 0.15) 0%, transparent 70%);
       bottom: -5%;
       right: 10%;
       animation-delay: 5s;
@@ -630,7 +631,7 @@ export default {
     &.shape-3 {
       width: 300px;
       height: 300px;
-      background: radial-gradient(circle, rgba(255, 184, 0, 0.2) 0%, transparent 70%);
+      background: radial-gradient(circle, rgba(147, 197, 253, 0.2) 0%, transparent 70%);
       top: 40%;
       right: -5%;
       animation-delay: 10s;
@@ -665,15 +666,12 @@ export default {
   height: 85vh;
   max-height: 750px;
   min-height: 600px;
-  background: var(--glass-bg);
-  backdrop-filter: blur(30px) saturate(180%);
-  border: 1px solid var(--glass-border);
+  background: var(--bg-secondary);
+  backdrop-filter: none;
+  border: 1px solid var(--border-color);
   border-radius: 24px;
   overflow: hidden;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5),
-              0 0 100px rgba(45, 91, 255, 0.15),
-              0 0 1px rgba(255, 255, 255, 0.2),
-              inset 0 1px 0 rgba(255, 255, 255, 0.15);
+  box-shadow: 0 20px 60px rgba(15, 23, 42, 0.08);
   animation: slideUp 0.6s ease-out;
 
   // 添加微光效果
@@ -687,7 +685,7 @@ export default {
     background: linear-gradient(
       90deg,
       transparent,
-      rgba(255, 255, 255, 0.03),
+      rgba(37, 99, 235, 0.06),
       transparent
     );
     animation: shimmer 10s infinite;
@@ -716,7 +714,7 @@ export default {
 .brand-section {
   flex: 1;
   padding: 60px;
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  background: var(--bg-muted);
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -731,7 +729,7 @@ export default {
     right: -50%;
     width: 100%;
     height: 100%;
-    background: radial-gradient(circle, rgba(255, 255, 255, 0.15) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(37, 99, 235, 0.12) 0%, transparent 70%);
     animation: pulse 8s infinite ease-in-out;
   }
 
@@ -743,7 +741,7 @@ export default {
     left: 0;
     width: 100%;
     height: 30%;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.2), transparent);
+    background: linear-gradient(to top, rgba(15, 23, 42, 0.08), transparent);
     pointer-events: none;
   }
 }
@@ -783,7 +781,7 @@ export default {
 .brand-logo {
   width: 80px;
   height: 80px;
-  filter: brightness(0) invert(1);
+  filter: none;
 }
 
 .brand-title {
@@ -796,7 +794,7 @@ export default {
 
 .brand-tagline {
   font-size: 18px;
-  color: rgba(255, 255, 255, 0.8);
+  color: var(--text-secondary);
   margin-bottom: 50px;
   font-weight: 300;
 }
@@ -804,13 +802,13 @@ export default {
 .quote-section {
   margin-bottom: 40px;
   padding-left: 20px;
-  border-left: 3px solid rgba(255, 255, 255, 0.3);
+  border-left: 3px solid var(--border-color);
 }
 
 .quote-mark {
   font-size: 60px;
   font-family: 'Georgia', serif;
-  color: rgba(255, 255, 255, 0.2);
+  color: rgba(37, 99, 235, 0.2);
   line-height: 0.5;
   margin-bottom: 10px;
 }
@@ -818,7 +816,7 @@ export default {
 .quote-text {
   font-size: 16px;
   line-height: 1.6;
-  color: rgba(255, 255, 255, 0.9);
+  color: var(--text-secondary);
   font-style: italic;
 }
 
@@ -831,8 +829,8 @@ export default {
 .tag {
   display: inline-block;
   padding: 8px 16px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.25);
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 20px;
   color: var(--text-primary);
   font-size: 12px;
@@ -982,11 +980,11 @@ export default {
   left: 6px;
   width: calc(50% - 6px);
   height: calc(100% - 12px);
-  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-light) 100%);
+  background: var(--bg-secondary);
   border-radius: 10px;
   transition: transform 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
   z-index: 1;
-  box-shadow: 0 4px 12px rgba(45, 91, 255, 0.3),
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.08),
               inset 0 1px 0 rgba(255, 255, 255, 0.2);
 }
 
@@ -1136,7 +1134,7 @@ export default {
   .el-input__inner {
     height: 44px;
     line-height: 44px;
-    background: rgba(255, 255, 255, 0.05);
+    background: var(--bg-secondary);
     border: 1.5px solid var(--border-color);
     border-radius: 11px;
     color: var(--text-primary);
@@ -1147,16 +1145,16 @@ export default {
     box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05);
 
     &:hover {
-      background: rgba(255, 255, 255, 0.07);
-      border-color: rgba(255, 255, 255, 0.18);
+      background: var(--bg-secondary);
+      border-color: var(--border-color);
       box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.05),
                   0 0 0 1px rgba(255, 255, 255, 0.05);
     }
 
     &:focus {
-      background: rgba(255, 255, 255, 0.09);
+      background: var(--bg-secondary);
       border-color: var(--primary-color);
-      box-shadow: 0 0 0 3px rgba(45, 91, 255, 0.12),
+      box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12),
                   inset 0 2px 4px rgba(0, 0, 0, 0.05);
     }
 
@@ -1286,7 +1284,7 @@ export default {
   height: 52px;
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(135deg, #46A6FF 0%, #7BC1FF 100%) !important;
+  background: var(--primary-color) !important;
   border: none !important;
   border-radius: 12px;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1294,7 +1292,7 @@ export default {
   overflow: hidden;
   font-family: 'Outfit', sans-serif;
   margin-top: 6px;
-  box-shadow: 0 4px 20px rgba(70, 166, 255, 0.35),
+  box-shadow: 0 4px 20px rgba(37, 99, 235, 0.25),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
 
   // 强制按钮文字颜色
@@ -1326,9 +1324,9 @@ export default {
 
   &:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #7BC1FF 0%, #46A6FF 100%) !important;
-    box-shadow: 0 8px 25px rgba(70, 166, 255, 0.45),
-                0 4px 12px rgba(70, 166, 255, 0.3),
+    background: var(--primary-dark) !important;
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35),
+                0 4px 12px rgba(37, 99, 235, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
 
     &::before {
@@ -1339,15 +1337,15 @@ export default {
   &:active {
     transform: translateY(0);
     transition: all 0.1s ease;
-    box-shadow: 0 4px 15px rgba(70, 166, 255, 0.45),
+    box-shadow: 0 4px 15px rgba(37, 99, 235, 0.35),
                 inset 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   &:focus {
     outline: none;
     transform: translateY(-1px);
-    box-shadow: 0 8px 25px rgba(70, 166, 255, 0.45),
-                0 4px 12px rgba(70, 166, 255, 0.3),
+    box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35),
+                0 4px 12px rgba(37, 99, 235, 0.25),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }

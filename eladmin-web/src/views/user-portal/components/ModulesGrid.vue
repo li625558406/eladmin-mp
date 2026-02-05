@@ -168,7 +168,7 @@ export default {
   align-items: center;
   gap: 16px;
   margin: 12px 0 8px;
-  color: #6b7280;
+  color: var(--text-muted, #64748b);
   font-size: 12px;
   font-weight: 600;
 
@@ -177,21 +177,21 @@ export default {
     content: '';
     flex: 1;
     height: 1px;
-    background: #e7ebf2;
+    background: var(--border-color, #e2e8f0);
   }
 
   span {
     padding: 4px 10px;
-    background: #ffffff;
-    border: 1px solid #e8ecf3;
+    background: var(--bg-secondary, #ffffff);
+    border: 1px solid var(--border-color, #e2e8f0);
     border-radius: 10px;
-    color: #1f2a44;
+    color: var(--text-primary, #1e293b);
   }
 }
 
 .module-card {
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 14px;
   padding: 16px;
   cursor: pointer;
@@ -199,35 +199,35 @@ export default {
   display: flex;
   gap: 14px;
   position: relative;
-  box-shadow: 0 10px 30px rgba(31, 42, 68, 0.06);
+  box-shadow: var(--shadow-sm, 0 10px 30px rgba(31, 42, 68, 0.06));
 
   &:hover {
-    border-color: #ffd2a6;
+    border-color: var(--primary-color, #2563eb);
     transform: translateY(-3px);
-    box-shadow: 0 14px 34px rgba(91, 91, 246, 0.14);
+    box-shadow: var(--shadow-md, 0 14px 34px rgba(15, 23, 42, 0.1));
 
     .card-icon {
-      background: linear-gradient(135deg, #ffd2a6, #ffc285);
-      box-shadow: 0 8px 18px rgba(91, 91, 246, 0.25);
+      background: rgba(37, 99, 235, 0.12);
+      box-shadow: 0 8px 18px rgba(37, 99, 235, 0.2);
       transform: scale(1.05);
 
       i {
-        color: #ffffff;
+        color: var(--primary-color, #2563eb);
         transform: scale(1.1) rotate(5deg);
       }
     }
 
     .tag {
-      background: #f2f4f8;
-      border-color: #e6eaf2;
-      color: #7a869a;
+      background: var(--bg-muted, #f1f5f9);
+      border-color: var(--border-color, #e2e8f0);
+      color: var(--text-muted, #64748b);
     }
   }
 
   .card-icon {
     width: 50px;
     height: 50px;
-    background: #f3f5ff;
+    background: rgba(37, 99, 235, 0.08);
     border-radius: 14px;
     display: flex;
     align-items: center;
@@ -237,7 +237,7 @@ export default {
 
     i {
       font-size: 24px;
-      color: #ffd2a6;
+      color: var(--primary-color, #2563eb);
       transition: all 0.3s ease;
     }
 
@@ -269,14 +269,14 @@ export default {
   .card-title {
     font-size: 15px;
     font-weight: 600;
-    color: #1f2a44;
+    color: var(--text-primary, #1e293b);
     margin: 0 0 6px;
     letter-spacing: -0.2px;
   }
 
   .card-desc {
     font-size: 12px;
-    color: #6b7280;
+    color: var(--text-secondary, #475569);
     line-height: 1.5;
     margin: 0 0 12px;
     display: -webkit-box;
@@ -300,15 +300,15 @@ export default {
       white-space: nowrap;
 
       &.hot {
-        background: #ffe9ef;
-        color: #ff6b8b;
-        border-color: #ffd2dd;
+        background: rgba(37, 99, 235, 0.12);
+        color: var(--primary-color, #2563eb);
+        border-color: rgba(37, 99, 235, 0.2);
       }
 
       &.new {
-        background: #fff4db;
-        color: #f59e0b;
-        border-color: #ffe3b3;
+        background: rgba(249, 115, 22, 0.12);
+        color: var(--accent-color, #f97316);
+        border-color: rgba(249, 115, 22, 0.2);
       }
     }
   }
@@ -328,9 +328,9 @@ export default {
       .tag {
         font-size: 10px;
         padding: 3px 8px;
-        background: #f2f4f8;
-        border: 1px solid #e6eaf2;
-        color: #7a869a;
+        background: var(--bg-muted, #f1f5f9);
+        border: 1px solid var(--border-color, #e2e8f0);
+        color: var(--text-muted, #64748b);
         border-radius: 5px;
         font-weight: 500;
         white-space: nowrap;
@@ -341,7 +341,7 @@ export default {
       display: flex;
       gap: 10px;
       font-size: 12px;
-      color: #98a2b3;
+      color: var(--text-muted, #64748b);
       font-weight: 600;
     }
   }

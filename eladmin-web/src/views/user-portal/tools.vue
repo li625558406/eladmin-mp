@@ -299,16 +299,28 @@ export default {
   min-height: 100vh;
   height: 100vh;
   overflow: hidden;
-  background: #f6f7fb;
+  background: #f8fafc;
   font-family: 'Outfit', sans-serif;
   --header-height: 64px;
-  --accent-color: #46a6ff;
+  --primary-color: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --accent-color: #f97316;
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-muted: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 6px 20px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 // 顶部导航栏
 .header {
-  background: #ffffff;
-  border-bottom: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -338,7 +350,7 @@ export default {
   .brand-name {
     font-size: 18px;
     font-weight: 700;
-    color: #1f2a44;
+    color: var(--text-primary);
     letter-spacing: -0.3px;
   }
 }
@@ -354,9 +366,9 @@ export default {
   align-items: center;
   gap: 8px;
   padding: 4px;
-  background: #f3f5fb;
+  background: var(--bg-muted);
   border-radius: 999px;
-  border: 1px solid #e6eaf3;
+  border: 1px solid var(--border-color);
 }
 
 .nav-tab {
@@ -366,18 +378,18 @@ export default {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  color: #667085;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    color: var(--accent-color);
+    color: var(--primary-color);
   }
 
   &.active {
-    color: #1f2a44;
-    background: #ffffff;
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-sm);
   }
 }
 
@@ -392,10 +404,10 @@ export default {
 
     &:hover {
       .username {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
       i {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
     }
 
@@ -403,19 +415,19 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2px solid #e8ecf3;
+      border: 2px solid var(--border-color);
       object-fit: cover;
     }
 
     .username {
       font-size: 13px;
       font-weight: 500;
-      color: #1f2a44;
+      color: var(--text-primary);
     }
 
     i {
       font-size: 12px;
-      color: #98a2b3;
+      color: var(--text-muted);
     }
   }
 
@@ -428,14 +440,14 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2px solid #e8ecf3;
+      border: 2px solid var(--border-color);
       object-fit: cover;
       opacity: 0.9;
     }
 
     .username.guest {
       font-size: 13px;
-      color: #98a2b3;
+      color: var(--text-muted);
     }
 
     .login-btn {
@@ -444,16 +456,16 @@ export default {
       border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
-      background: linear-gradient(135deg, #46a6ff 0%, #7bc1ff 100%);
-      border-color: #46a6ff;
+      background: var(--primary-color);
+      border-color: var(--primary-color);
       color: #ffffff;
-      box-shadow: 0 6px 16px rgba(70, 166, 255, 0.25);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
 
       &:hover,
       &:focus {
-        background: linear-gradient(135deg, #7bc1ff 0%, #46a6ff 100%);
-        border-color: #46a6ff;
-        box-shadow: 0 8px 18px rgba(70, 166, 255, 0.35);
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
       }
     }
   }
@@ -493,14 +505,14 @@ export default {
   }
 
   &::-webkit-scrollbar-track {
-    background: #f6f7fb;
+    background: var(--bg-primary);
     border-radius: 999px;
   }
 
   &::-webkit-scrollbar-thumb {
     background: rgba(180, 186, 204, 0.7);
     border-radius: 999px;
-    border: 2px solid #f6f7fb;
+    border: 2px solid var(--bg-primary);
   }
 
   &::-webkit-scrollbar-thumb:hover {
@@ -521,12 +533,12 @@ export default {
 
 .loading-state,
 .error-state {
-  background: #ffffff;
+  background: var(--bg-secondary);
   border-radius: 16px;
   padding: 60px 24px;
   text-align: center;
-  box-shadow: 0 12px 32px rgba(15, 23, 42, 0.08);
-  color: #667085;
+  box-shadow: var(--shadow-sm);
+  color: var(--text-muted);
 
   i {
     font-size: 28px;
@@ -545,7 +557,7 @@ export default {
   justify-content: center;
   align-items: center;
   gap: 8px;
-  color: #98a2b3;
+  color: var(--text-muted);
   padding: 16px 0;
 }
 

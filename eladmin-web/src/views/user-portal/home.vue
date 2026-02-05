@@ -846,16 +846,28 @@ export default {
   min-height: 100vh;
   height: 100vh;
   overflow: hidden;
-  background: #f6f7fb;
+  background: #f8fafc;
   font-family: 'Outfit', sans-serif;
   --header-height: 64px;
-  --accent-color: #46a6ff;
+  --primary-color: #2563eb;
+  --primary-light: #3b82f6;
+  --primary-dark: #1d4ed8;
+  --accent-color: #f97316;
+  --bg-primary: #f8fafc;
+  --bg-secondary: #ffffff;
+  --bg-muted: #f1f5f9;
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-muted: #64748b;
+  --border-color: #e2e8f0;
+  --shadow-sm: 0 6px 20px rgba(15, 23, 42, 0.06);
+  --shadow-md: 0 12px 28px rgba(15, 23, 42, 0.08);
 }
 
 // 顶部导航栏
 .header {
-  background: #ffffff;
-  border-bottom: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border-bottom: 1px solid var(--border-color);
   position: fixed;
   top: 0;
   left: 0;
@@ -885,7 +897,7 @@ export default {
   .brand-name {
     font-size: 18px;
     font-weight: 700;
-    color: #1f2a44;
+    color: var(--text-primary);
     letter-spacing: -0.3px;
   }
 }
@@ -901,9 +913,9 @@ export default {
   align-items: center;
   gap: 8px;
   padding: 4px;
-  background: #f3f5fb;
+  background: var(--bg-muted);
   border-radius: 999px;
-  border: 1px solid #e6eaf3;
+  border: 1px solid var(--border-color);
 }
 
 .nav-tab {
@@ -913,18 +925,18 @@ export default {
   border-radius: 999px;
   font-size: 13px;
   font-weight: 600;
-  color: #667085;
+  color: var(--text-muted);
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    color: var(--accent-color);
+    color: var(--primary-color);
   }
 
   &.active {
-    color: #1f2a44;
-    background: #ffffff;
-    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
+    color: var(--text-primary);
+    background: var(--bg-secondary);
+    box-shadow: var(--shadow-sm);
   }
 }
 
@@ -939,10 +951,10 @@ export default {
 
     &:hover {
       .username {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
       i {
-        color: var(--accent-color);
+        color: var(--primary-color);
       }
     }
 
@@ -950,19 +962,19 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2px solid #e8ecf3;
+      border: 2px solid var(--border-color);
       object-fit: cover;
     }
 
     .username {
       font-size: 13px;
       font-weight: 500;
-      color: #1f2a44;
+      color: var(--text-primary);
     }
 
     i {
       font-size: 12px;
-      color: #98a2b3;
+      color: var(--text-muted);
     }
   }
 
@@ -975,14 +987,14 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2px solid #e8ecf3;
+      border: 2px solid var(--border-color);
       object-fit: cover;
       opacity: 0.9;
     }
 
     .username.guest {
       font-size: 13px;
-      color: #98a2b3;
+      color: var(--text-muted);
     }
 
     .login-btn {
@@ -991,16 +1003,16 @@ export default {
       border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
-      background: linear-gradient(135deg, #46a6ff 0%, #7bc1ff 100%);
-      border-color: #46a6ff;
+      background: var(--primary-color);
+      border-color: var(--primary-color);
       color: #ffffff;
-      box-shadow: 0 6px 16px rgba(70, 166, 255, 0.25);
+      box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
 
       &:hover,
       &:focus {
-        background: linear-gradient(135deg, #7bc1ff 0%, #46a6ff 100%);
-        border-color: #46a6ff;
-        box-shadow: 0 8px 18px rgba(70, 166, 255, 0.35);
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+        box-shadow: 0 8px 18px rgba(37, 99, 235, 0.35);
       }
     }
   }
@@ -1042,14 +1054,14 @@ export default {
   }
 
   &::-webkit-scrollbar-track {
-    background: #f6f7fb;
+    background: var(--bg-primary);
     border-radius: 999px;
   }
 
   &::-webkit-scrollbar-thumb {
     background: rgba(180, 186, 204, 0.7);
     border-radius: 999px;
-    border: 2px solid #f6f7fb;
+    border: 2px solid var(--bg-primary);
   }
 
   &::-webkit-scrollbar-thumb:hover {
@@ -1081,7 +1093,7 @@ export default {
   align-items: center;
   gap: 16px;
   margin: 6px 0 4px;
-  color: #6b7280;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 600;
 
@@ -1090,15 +1102,15 @@ export default {
     content: '';
     flex: 1;
     height: 1px;
-    background: #e7ebf2;
+    background: var(--border-color);
   }
 
   span {
     padding: 4px 10px;
-    background: #ffffff;
-    border: 1px solid #e8ecf3;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
     border-radius: 10px;
-    color: #1f2a44;
+    color: var(--text-primary);
   }
 }
 
@@ -1106,17 +1118,17 @@ export default {
   display: flex;
   gap: 18px;
   padding: 18px;
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 16px;
-  box-shadow: 0 12px 30px rgba(31, 42, 68, 0.06);
+  box-shadow: var(--shadow-sm);
   cursor: pointer;
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #ffd2a6;
+    border-color: var(--primary-color);
     transform: translateY(-3px);
-    box-shadow: 0 14px 34px rgba(91, 91, 246, 0.14);
+    box-shadow: var(--shadow-md);
   }
 }
 
@@ -1137,27 +1149,27 @@ export default {
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(255, 210, 166, 0.25);
-  color: #c26a2e;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary-color);
   font-size: 12px;
   font-weight: 600;
 }
 
 .news-source {
   font-size: 12px;
-  color: #98a2b3;
+  color: var(--text-muted);
 }
 
 .news-title {
   font-size: 16px;
-  color: #1f2a44;
+  color: var(--text-primary);
   line-height: 1.5;
   margin-bottom: 8px;
 }
 
 .news-summary {
   font-size: 13px;
-  color: #667085;
+  color: var(--text-secondary);
   line-height: 1.6;
   margin-bottom: 12px;
 }
@@ -1172,14 +1184,14 @@ export default {
 .news-tag {
   padding: 4px 10px;
   border-radius: 999px;
-  background: #f2f4f8;
-  color: #7a869a;
+  background: var(--bg-muted);
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 600;
 
   &.secondary {
-    background: #f2f4f8;
-    color: #7a869a;
+    background: rgba(37, 99, 235, 0.12);
+    color: var(--primary-color);
   }
 }
 
@@ -1187,7 +1199,7 @@ export default {
   display: flex;
   gap: 12px;
   font-size: 12px;
-  color: #98a2b3;
+  color: var(--text-muted);
 }
 
 .news-cover {
@@ -1196,7 +1208,7 @@ export default {
   border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
-  background: #f3f5ff;
+  background: var(--bg-muted);
 
   img {
     width: 100%;
@@ -1210,20 +1222,20 @@ export default {
 .empty-state {
   padding: 60px 20px;
   text-align: center;
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(31, 42, 68, 0.06);
+  box-shadow: var(--shadow-sm);
 
   i {
     font-size: 48px;
-    color: #ffd2a6;
+    color: var(--primary-color);
     margin-bottom: 16px;
     opacity: 0.6;
   }
 
   p {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 14px;
     margin: 0 0 20px;
     font-weight: 300;
@@ -1231,7 +1243,7 @@ export default {
 
   button {
     padding: 10px 20px;
-    background: linear-gradient(135deg, #ffd2a6, #ffc285);
+    background: var(--primary-color);
     border: none;
     border-radius: 8px;
     color: #ffffff;
@@ -1240,11 +1252,11 @@ export default {
     cursor: pointer;
     font-family: 'Outfit', sans-serif;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 16px rgba(91, 91, 246, 0.2);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35),
                   inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
@@ -1260,7 +1272,7 @@ export default {
   justify-content: center;
   gap: 8px;
   padding: 16px 0;
-  color: #98a2b3;
+  color: var(--text-muted);
   font-size: 12px;
   font-weight: 500;
 }
@@ -1269,19 +1281,19 @@ export default {
 .error-state {
   padding: 60px 20px;
   text-align: center;
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 12px;
-  box-shadow: 0 10px 30px rgba(31, 42, 68, 0.06);
+  box-shadow: var(--shadow-sm);
 
   i {
     font-size: 42px;
-    color: #ffd2a6;
+    color: var(--primary-color);
     margin-bottom: 16px;
   }
 
   p {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 14px;
     margin: 0 0 20px;
     font-weight: 300;
@@ -1289,7 +1301,7 @@ export default {
 
   button {
     padding: 10px 20px;
-    background: linear-gradient(135deg, #ffd2a6, #ffc285);
+    background: var(--primary-color);
     border: none;
     border-radius: 8px;
     color: #ffffff;
@@ -1298,11 +1310,11 @@ export default {
     cursor: pointer;
     font-family: 'Outfit', sans-serif;
     transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-    box-shadow: 0 6px 16px rgba(91, 91, 246, 0.2);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
 
     &:hover {
       transform: translateY(-2px);
-      box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
+      box-shadow: 0 8px 25px rgba(37, 99, 235, 0.35),
                   inset 0 1px 0 rgba(255, 255, 255, 0.3);
     }
 
@@ -1314,14 +1326,14 @@ export default {
 
 // Element UI 下拉菜单样式
 ::v-deep .el-dropdown-menu {
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary);
+  border: 1px solid var(--border-color);
   border-radius: 10px;
   padding: 6px;
-  box-shadow: 0 12px 30px rgba(31, 42, 68, 0.12);
+  box-shadow: var(--shadow-md);
 
   .el-dropdown-menu__item {
-    color: #6b7280;
+    color: var(--text-muted);
     font-size: 13px;
     font-weight: 500;
     padding: 9px 14px;
@@ -1330,14 +1342,14 @@ export default {
     font-family: 'Outfit', sans-serif;
 
     &:hover {
-      background: #f2f4f8;
-      color: #1f2a44;
+      background: var(--bg-muted);
+      color: var(--text-primary);
     }
 
     &.is-divided {
       margin-top: 4px;
       padding-top: 9px;
-      border-top: 1px solid #edf0f6;
+      border-top: 1px solid var(--border-color);
     }
   }
 }

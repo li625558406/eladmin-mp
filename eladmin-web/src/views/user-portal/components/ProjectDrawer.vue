@@ -195,7 +195,7 @@ export default {
 
 <style lang="scss" scoped>
 .project-drawer {
-  background: #ffffff;
+  background: var(--bg-secondary, #ffffff);
 }
 
 .drawer-content {
@@ -207,26 +207,26 @@ export default {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
-  border-bottom: 1px solid #eef1f7;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   padding-bottom: 16px;
   margin-bottom: 20px;
 }
 
 .drawer-repo {
   font-size: 12px;
-  color: #98a2b3;
+  color: var(--text-muted, #64748b);
   margin-bottom: 6px;
 }
 
 .drawer-title {
   font-size: 20px;
   font-weight: 700;
-  color: #1f2a44;
+  color: var(--text-primary, #1e293b);
 }
 
 .drawer-close {
   border: none;
-  background: #f2f4f8;
+  background: var(--bg-muted, #f1f5f9);
   border-radius: 8px;
   width: 32px;
   height: 32px;
@@ -237,14 +237,14 @@ export default {
   transition: all 0.2s ease;
 
   &:hover {
-    background: #e8ecf3;
+    background: var(--border-color, #e2e8f0);
   }
 }
 
 .drawer-loading {
   padding: 40px 0;
   text-align: center;
-  color: #6b7280;
+  color: var(--text-muted, #64748b);
 
   i {
     font-size: 30px;
@@ -263,7 +263,7 @@ export default {
   max-height: 220px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid #eef1f7;
+  border: 1px solid var(--border-color, #e2e8f0);
   cursor: zoom-in;
 
   img {
@@ -276,7 +276,7 @@ export default {
 }
 
 .drawer-desc {
-  color: #475467;
+  color: var(--text-secondary, #475569);
   line-height: 1.7;
 }
 
@@ -288,9 +288,9 @@ export default {
   .tag {
     font-size: 11px;
     padding: 4px 10px;
-    background: #f2f4f8;
-    border: 1px solid #e6eaf2;
-    color: #7a869a;
+    background: var(--bg-muted, #f1f5f9);
+    border: 1px solid var(--border-color, #e2e8f0);
+    color: var(--text-muted, #64748b);
     border-radius: 999px;
     font-weight: 600;
   }
@@ -303,9 +303,9 @@ export default {
 }
 
 .meta-chip {
-  background: #f2f4f8;
-  border: 1px solid #e6eaf2;
-  color: #6b7280;
+  background: var(--bg-muted, #f1f5f9);
+  border: 1px solid var(--border-color, #e2e8f0);
+  color: var(--text-muted, #64748b);
   padding: 6px 10px;
   border-radius: 999px;
   font-size: 12px;
@@ -318,28 +318,28 @@ export default {
   gap: 8px 16px;
   padding: 12px;
   border-radius: 12px;
-  background: #f9fafc;
-  border: 1px solid #eef1f7;
+  background: var(--bg-primary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
 }
 
 .info-item {
   display: flex;
   gap: 8px;
   font-size: 12px;
-  color: #6b7280;
+  color: var(--text-muted, #64748b);
 
   .label {
-    color: #98a2b3;
+    color: var(--text-muted, #64748b);
     min-width: 60px;
   }
 
   .value {
-    color: #475467;
+    color: var(--text-secondary, #475569);
     word-break: break-word;
   }
 
   .link {
-    color: #5b5bf6;
+    color: var(--primary-color, #2563eb);
     text-decoration: none;
   }
 
@@ -349,28 +349,28 @@ export default {
 }
 
 .drawer-section {
-  background: #f9fafc;
-  border: 1px solid #eef1f7;
+  background: var(--bg-primary, #f8fafc);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 12px;
   padding: 14px;
 
   h4 {
     font-size: 14px;
     font-weight: 700;
-    color: #1f2a44;
+    color: var(--text-primary, #1e293b);
     margin: 0 0 8px;
   }
 
   p {
     margin: 0;
-    color: #5d6472;
+    color: var(--text-secondary, #475569);
     line-height: 1.6;
   }
 
   ul {
     margin: 0;
     padding-left: 16px;
-    color: #5d6472;
+    color: var(--text-secondary, #475569);
     line-height: 1.6;
   }
 }
@@ -384,9 +384,9 @@ export default {
 }
 
 .copy-btn {
-  border: 1px solid #e6eaf2;
-  background: #ffffff;
-  color: #475467;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-secondary, #ffffff);
+  color: var(--text-secondary, #475569);
   border-radius: 8px;
   padding: 4px 10px;
   font-size: 12px;
@@ -394,8 +394,8 @@ export default {
   transition: all 0.2s ease;
 
   &:hover {
-    border-color: #ffd2a6;
-    color: #1f2a44;
+    border-color: var(--primary-color, #2563eb);
+    color: var(--text-primary, #1e293b);
   }
 }
 
@@ -453,17 +453,17 @@ export default {
   justify-content: flex-start;
 
   a {
-    background: #ffd2a6;
+    background: var(--primary-color, #2563eb);
     color: #ffffff;
     padding: 10px 16px;
     border-radius: 10px;
     font-weight: 600;
     text-decoration: none;
-    box-shadow: 0 6px 16px rgba(91, 91, 246, 0.2);
+    box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
     transition: all 0.2s ease;
 
     &:hover {
-      background: #ffc285;
+      background: var(--primary-dark, #1d4ed8);
     }
   }
 }

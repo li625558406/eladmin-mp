@@ -39,23 +39,23 @@ export default {
 .sidebar-categories {
   width: 220px;
   flex-shrink: 0;
-  background: #ffffff;
-  border: 1px solid #e8ecf3;
+  background: var(--bg-secondary, #ffffff);
+  border: 1px solid var(--border-color, #e2e8f0);
   border-radius: 14px;
   padding: 14px;
   position: sticky;
   top: 0;
   height: 100%;
-  box-shadow: 0 10px 30px rgba(31, 42, 68, 0.06);
+  box-shadow: var(--shadow-sm, 0 10px 30px rgba(31, 42, 68, 0.06));
   overflow: hidden;
 }
 
 .sidebar-title {
   font-size: 14px;
   font-weight: 700;
-  color: #1f2a44;
+  color: var(--text-primary, #1e293b);
   padding: 6px 8px 10px;
-  border-bottom: 1px solid #eef1f7;
+  border-bottom: 1px solid var(--border-color, #e2e8f0);
   margin-bottom: 8px;
 }
 
@@ -74,7 +74,7 @@ export default {
   background: transparent;
   border: 1px solid transparent;
   border-radius: 8px;
-  color: #6b7280;
+  color: var(--text-muted, #64748b);
   font-size: 13px;
   font-weight: 500;
   cursor: pointer;
@@ -90,8 +90,8 @@ export default {
 
   .count {
     font-size: 11px;
-    color: #9aa3b2;
-    background: #f2f4f8;
+    color: var(--text-muted, #64748b);
+    background: var(--bg-muted, #f1f5f9);
     padding: 2px 7px;
     border-radius: 5px;
     font-weight: 600;
@@ -99,21 +99,21 @@ export default {
   }
 
   &:hover {
-    background: #f6f7fb;
-    border-color: #e8ecf3;
-    color: #1f2a44;
+    background: var(--bg-muted, #f1f5f9);
+    border-color: var(--border-color, #e2e8f0);
+    color: var(--text-primary, #1e293b);
 
     .count {
-      background: rgba(91, 91, 246, 0.12);
-      color: #ffd2a6;
+      background: rgba(37, 99, 235, 0.12);
+      color: var(--primary-color, #2563eb);
     }
   }
 
   &.active {
-    background: rgba(91, 91, 246, 0.12);
-    border-color: rgba(91, 91, 246, 0.35);
-    color: #1f2a44;
-    box-shadow: 0 6px 14px rgba(91, 91, 246, 0.12);
+    background: rgba(37, 99, 235, 0.12);
+    border-color: rgba(37, 99, 235, 0.35);
+    color: var(--text-primary, #1e293b);
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.12);
 
     &::before {
       content: '';
@@ -122,15 +122,15 @@ export default {
       top: 25%;
       bottom: 25%;
       width: 3px;
-      background: linear-gradient(180deg, #ffd2a6, #6c7cff);
+      background: linear-gradient(180deg, #93c5fd, #2563eb);
       border-radius: 0 2px 2px 0;
     }
 
     .count {
-      background: linear-gradient(135deg, #ffd2a6, #ffc285);
+      background: var(--primary-color, #2563eb);
       color: #ffffff;
       font-weight: 700;
-      box-shadow: 0 2px 8px rgba(91, 91, 246, 0.2);
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2);
     }
   }
 }

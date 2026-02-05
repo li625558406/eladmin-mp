@@ -83,35 +83,45 @@ export default {
   },
   computed: {
     newsTitle() {
-      return this.news.ai_title || this.news.title || this.news.headline || this.news.name || 'AI 新闻详情'
+      const news = this.news || {}
+      return news.ai_title || news.title || news.headline || news.name || 'AI 新闻详情'
     },
     newsSummary() {
-      return this.news.ai_summary || this.news.summary || this.news.description || this.news.excerpt || ''
+      const news = this.news || {}
+      return news.ai_summary || news.summary || news.description || news.excerpt || ''
     },
     newsContent() {
-      return this.news.ai_summary || this.news.content || this.news.body || ''
+      const news = this.news || {}
+      return news.ai_summary || news.content || news.body || ''
     },
     newsSource() {
-      return this.news.source || this.news.source_name || this.news.publisher || ''
+      const news = this.news || {}
+      return news.source || news.source_name || news.publisher || ''
     },
     newsDate() {
-      return this.news.published_at || this.news.publishedAt || this.news.created_at || ''
+      const news = this.news || {}
+      return news.published_at || news.publishedAt || news.created_at || ''
     },
     newsUrl() {
-      return this.news.url || this.news.link || ''
+      const news = this.news || {}
+      return news.url || news.link || ''
     },
     newsCategory() {
-      return this.news.ai_category || this.news.category || ''
+      const news = this.news || {}
+      return news.ai_category || news.category || ''
     },
     newsSentiment() {
-      return this.news.ai_sentiment || this.news.sentiment || ''
+      const news = this.news || {}
+      return news.ai_sentiment || news.sentiment || ''
     },
     newsHighlights() {
-      const highlights = this.news.ai_highlights || this.news.highlights || []
+      const news = this.news || {}
+      const highlights = news.ai_highlights || news.highlights || []
       return Array.isArray(highlights) ? highlights : []
     },
     newsKeywords() {
-      const keywords = this.news.ai_keywords || this.news.keywords || []
+      const news = this.news || {}
+      const keywords = news.ai_keywords || news.keywords || []
       return Array.isArray(keywords) ? keywords : []
     }
   },

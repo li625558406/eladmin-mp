@@ -81,9 +81,10 @@ public class UserRegisterController {
 
         // 注册用户
         User user = userService.register(
-            registerDto.getUsername(), 
-            registerDto.getEmail(), 
-            encryptPassword
+            registerDto.getUsername(),
+            registerDto.getEmail(),
+            encryptPassword,
+            registerDto.getAvatarPath()
         );
 
         Map<String, Object> result = new HashMap<>(3);

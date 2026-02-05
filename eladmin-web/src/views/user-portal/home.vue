@@ -247,6 +247,15 @@ export default {
     },
     userAvatar() {
       const user = this.userProfile
+      if (user.avatarPath) {
+        if (user.avatarPath.startsWith('http')) {
+          return user.avatarPath
+        }
+        const base = process.env.BASE_URL || '/'
+        const normalizedBase = base.endsWith('/') ? base.slice(0, -1) : base
+        const normalizedPath = user.avatarPath.startsWith('/') ? user.avatarPath : `/${user.avatarPath}`
+        return `${normalizedBase}${normalizedPath}`
+      }
       if (user.avatarName && this.baseApi) {
         return `${this.baseApi}/avatar/${user.avatarName}`
       }
@@ -363,11 +372,18 @@ export default {
     }
   },
   created() {
+    this.ensureUserProfile()
     this.fetchProjects({ reset: true })
     this.fetchPromptStats()
     this.fetchAiNewsTotal()
   },
   methods: {
+    ensureUserProfile() {
+      const profile = this.userProfile
+      if (this.isLoggedIn && (!profile || !profile.username)) {
+        this.$store.dispatch('GetInfo').catch(() => {})
+      }
+    },
     isActiveTab(tab) {
       return this.$route.path === tab.path
     },

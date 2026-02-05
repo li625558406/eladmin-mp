@@ -141,7 +141,7 @@ public interface UserService extends IService<User> {
      * @param password 密码
      * @return User 新注册的用户
      */
-    User register(String username, String email, String password);
+    User register(String username, String email, String password, String avatarPath);
 
     /**
      * 根据邮箱查询用户

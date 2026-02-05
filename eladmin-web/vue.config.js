@@ -22,6 +22,10 @@ module.exports = {
   devServer: {
     port: port,
     open: true,
+    contentBase: [resolve('public'), resolve('static')],
+    before: app => {
+      app.use('/static', require('express').static(resolve('static')))
+    },
     overlay: {
       warnings: false,
       errors: true

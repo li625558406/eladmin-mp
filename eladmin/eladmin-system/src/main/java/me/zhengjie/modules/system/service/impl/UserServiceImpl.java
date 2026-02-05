@@ -295,7 +295,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public User register(String username, String email, String password) {
+    public User register(String username, String email, String password, String avatarPath) {
         // 检查用户名是否已存在
         User existUser = findByName(username);
         if (existUser != null) {
@@ -319,6 +319,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPhone(""); // 默认手机号
         user.setGender(""); // 默认性别
         user.setDeptId(7L); // 默认部门
+        if (StringUtils.isNotBlank(avatarPath)) {
+            user.setAvatarPath(avatarPath);
+        }
         user.setPwdResetTime(new Date());
 
         // 保存用户

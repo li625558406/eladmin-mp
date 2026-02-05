@@ -407,6 +407,12 @@ export default {
     selectTag(tagId) {
       this.activeTagId = tagId
       this.searchText = ''
+      this.detailVisible = false
+      this.detailLoading = false
+      this.selectedProject = null
+      this.newsDetailVisible = false
+      this.newsDetailLoading = false
+      this.selectedNews = null
       if (this.searchTimer) {
         clearTimeout(this.searchTimer)
         this.searchTimer = null

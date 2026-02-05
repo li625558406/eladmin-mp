@@ -2,7 +2,7 @@
   <el-drawer
     :visible.sync="visible"
     :with-header="false"
-    size="520px"
+    size="42%"
     custom-class="ai-news-drawer"
   >
     <div class="drawer-content">
@@ -177,6 +177,13 @@ export default {
 .close-btn {
   border: 1px solid var(--border-color, #e2e8f0);
   color: var(--text-muted, #64748b);
+  width: 32px;
+  height: 32px;
+  min-width: 32px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .drawer-loading {

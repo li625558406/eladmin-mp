@@ -49,7 +49,7 @@
         <div class="layout-container">
           <!-- 左侧分类导航 -->
           <TagSidebar
-            title="工具列表"
+            title="列表"
             :tags="tags"
             :active-tag-id="activeTagId"
             @select="selectTag"

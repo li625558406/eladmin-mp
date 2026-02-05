@@ -1116,3 +1116,27 @@ COMMENT ON COLUMN gpt4o_prompts.image_path IS '示例图片相对路径';
 COMMENT ON COLUMN gpt4o_prompts.extra_data IS '完整JSON数据（JSONB）';
 COMMENT ON COLUMN gpt4o_prompts.created_at IS '创建时间';
 COMMENT ON COLUMN gpt4o_prompts.updated_at IS '更新时间';
+
+
+-- TechCrunch AI News table (PostgreSQL)
+CREATE TABLE IF NOT EXISTS techcrunch_ai_news (
+    id BIGSERIAL PRIMARY KEY,
+    title VARCHAR(500) NOT NULL,
+    url VARCHAR(1000) NOT NULL UNIQUE,
+    published_at TIMESTAMPTZ,
+    content TEXT,
+    ai_title VARCHAR(500),
+    ai_summary TEXT,
+    ai_category VARCHAR(200),
+    ai_sentiment VARCHAR(50),
+    ai_highlights JSONB,
+    ai_keywords JSONB,
+    ai_data JSONB,
+    source VARCHAR(100) DEFAULT 'techcrunch',
+    created_at TIMESTAMP DEFAULT NOW(),
+    updated_at TIMESTAMP DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_tc_ai_news_url ON techcrunch_ai_news (url);
+CREATE INDEX IF NOT EXISTS idx_tc_ai_news_published_at ON techcrunch_ai_news (published_at);
+CREATE INDEX IF NOT EXISTS idx_tc_ai_news_created_at ON techcrunch_ai_news (created_at);

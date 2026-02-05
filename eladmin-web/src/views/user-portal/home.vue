@@ -50,7 +50,7 @@
         <div class="layout-container">
           <!-- 左侧分类导航 -->
           <TagSidebar
-            title="实时数采"
+            title="列表"
             :tags="tags"
             :active-tag-id="activeTagId"
             @select="selectTag"
@@ -62,7 +62,7 @@
               <ModulesToolbar
                 v-model="searchText"
                 :title="activeTagLabel"
-                :count="filteredProjects.length"
+                :count="activeListCount"
                 :placeholder="searchPlaceholder"
                 @search="handleSearch"
               />
@@ -75,10 +75,39 @@
               <div v-else-if="listError" class="error-state">
                 <i class="el-icon-warning-outline" />
                 <p>{{ listError }}</p>
-                <button @click="fetchProjects">重试</button>
+                <button @click="retryFetch">重试</button>
               </div>
 
               <!-- 模块卡片网格 -->
+              <div v-else-if="activeTagId === 'ai-news'" class="news-list">
+                <article
+                  v-for="news in filteredNews"
+                  :key="news.id || news.url || news.title"
+                  class="news-card"
+                  @click="openNewsDetail(news)"
+                >
+                  <div class="news-main">
+                    <div class="news-header">
+                      <span class="news-badge">AI 报道</span>
+                      <span v-if="news.source" class="news-source">{{ news.source }}</span>
+                    </div>
+                    <h3 class="news-title">{{ news.title || '未命名报道' }}</h3>
+                    <p class="news-summary">{{ news.summary || '暂无摘要内容' }}</p>
+                    <div v-if="news.category || news.sentiment" class="news-tags">
+                      <span v-if="news.category" class="news-tag">{{ news.category }}</span>
+                      <span v-if="news.sentiment" class="news-tag secondary">{{ news.sentiment }}</span>
+                    </div>
+                    <div class="news-meta">
+                      <span v-if="news.published_at" class="news-date">{{ formatDateOnly(news.published_at) }}</span>
+                      <span v-else class="news-date">未知日期</span>
+                      <span v-if="news.author" class="news-author">{{ news.author }}</span>
+                    </div>
+                  </div>
+                  <div v-if="news.image" class="news-cover">
+                    <img :src="news.image" alt="cover">
+                  </div>
+                </article>
+              </div>
               <ModulesGrid
                 v-else-if="activeTagId === 'github' && groupedGithubProjects.length > 0"
                 :grouped-items="groupedGithubProjects"
@@ -118,16 +147,23 @@
       :format-period-label="formatPeriodLabel"
       :variant="activeTagId"
     />
+    <AiNewsDrawer
+      :visible.sync="newsDetailVisible"
+      :loading="newsDetailLoading"
+      :news="selectedNews"
+    />
   </div>
 </template>
 
 <script>
 import { getGithubProjects, getGithubProjectDetail } from '@/api/ai/github'
 import { searchPromptList, getPromptStats } from '@/api/ai/prompts'
+import { searchTechCrunchNews, getTechCrunchNewsDetail, getTechCrunchNewsTotal } from '@/api/ai/techcrunch'
 import TagSidebar from './components/TagSidebar'
 import ModulesToolbar from './components/ModulesToolbar'
 import ModulesGrid from './components/ModulesGrid'
 import ProjectDrawer from './components/ProjectDrawer'
+import AiNewsDrawer from './components/AiNewsDrawer'
 import { mapGetters } from 'vuex'
 import DefaultAvatar from '@/assets/images/avatar.png'
 
@@ -137,7 +173,8 @@ export default {
     TagSidebar,
     ModulesToolbar,
     ModulesGrid,
-    ProjectDrawer
+    ProjectDrawer,
+    AiNewsDrawer
   },
   data() {
     return {
@@ -148,7 +185,8 @@ export default {
         { id: 'tools', label: '工具集', path: '/user/tools' }
       ],
       tags: [
-        { id: 'github', name: 'GitHub 热榜', count: 0 },
+        { id: 'github', name: '实时数采', count: 0 },
+        { id: 'ai-news', name: 'AI 报道', count: 0 },
         { id: 'banana', name: 'banana 绘图', count: 0 }
       ],
       githubState: {
@@ -169,10 +207,23 @@ export default {
         listError: '',
         isFetchingMore: false
       },
+      aiNewsState: {
+        items: [],
+        page: 1,
+        pageSize: 20,
+        hasMore: true,
+        listLoading: false,
+        listError: '',
+        isFetchingMore: false,
+        total: 0
+      },
       searchTimer: null,
       detailVisible: false,
       detailLoading: false,
-      selectedProject: null
+      selectedProject: null,
+      newsDetailVisible: false,
+      newsDetailLoading: false,
+      selectedNews: null
     }
   },
   computed: {
@@ -198,7 +249,13 @@ export default {
       return DefaultAvatar
     },
     activeState() {
-      return this.activeTagId === 'banana' ? this.bananaState : this.githubState
+      if (this.activeTagId === 'banana') {
+        return this.bananaState
+      }
+      if (this.activeTagId === 'ai-news') {
+        return this.aiNewsState
+      }
+      return this.githubState
     },
     activeTagLabel() {
       const active = this.tags.find(tag => tag.id === this.activeTagId)
@@ -207,6 +264,9 @@ export default {
     searchPlaceholder() {
       if (this.activeTagId === 'banana') {
         return '搜索 banana 绘图提示词...'
+      }
+      if (this.activeTagId === 'ai-news') {
+        return '搜索 AI 报道...'
       }
       return '搜索 实时数采项目...'
     },
@@ -245,15 +305,49 @@ export default {
       return Array.from(groups.entries()).map(([date, items]) => ({ date, items }))
     },
     emptyStateText() {
+      if (this.activeTagId === 'ai-news') {
+        return '未找到 AI 报道'
+      }
       if (this.activeTagId !== 'github') {
         return '未找到绘图提示词'
       }
       return '未找到相关项目'
+    },
+    filteredNews() {
+      const items = [...this.aiNewsState.items]
+      if (!this.searchText) {
+        return items
+      }
+      const searchLower = this.searchText.toLowerCase()
+      return items.filter(news => {
+        return [
+          news.title,
+          news.summary,
+          news.source,
+          news.author
+        ].some(field => field && field.toLowerCase().includes(searchLower))
+      })
+    },
+    activeListCount() {
+      if (this.activeTagId === 'ai-news') {
+        return this.filteredNews.length
+      }
+      return this.filteredProjects.length
+    },
+    listLoading() {
+      return this.activeState.listLoading
+    },
+    listError() {
+      return this.activeState.listError
+    },
+    isFetchingMore() {
+      return this.activeState.isFetchingMore
     }
   },
   created() {
     this.fetchProjects({ reset: true })
     this.fetchPromptStats()
+    this.fetchAiNewsTotal()
   },
   methods: {
     isActiveTab(tab) {
@@ -273,6 +367,23 @@ export default {
         // ignore stats failures to avoid blocking page
       }
     },
+    async fetchAiNewsTotal(keyword) {
+      try {
+        const params = {}
+        if (keyword) {
+          params.keyword = keyword
+        }
+        const data = await getTechCrunchNewsTotal(params)
+        const total = typeof data === 'number'
+          ? data
+          : (data && typeof data.total === 'number'
+            ? data.total
+            : (data && typeof data.count === 'number' ? data.count : 0))
+        this.updateTagCount('ai-news', total)
+      } catch (error) {
+        // ignore stats failures to avoid blocking page
+      }
+    },
     selectTag(tagId) {
       this.activeTagId = tagId
       this.searchText = ''
@@ -285,19 +396,26 @@ export default {
       }
       if (tagId === 'github') {
         this.fetchProjects({ reset: true })
+      } else if (tagId === 'ai-news') {
+        this.fetchAiNews({ reset: true })
       } else if (tagId === 'banana') {
         this.fetchPrompts({ reset: true })
       }
     },
     handleSearch() {
-      if (this.activeTagId !== 'banana') {
+      if (this.activeTagId !== 'banana' && this.activeTagId !== 'ai-news') {
         return
       }
       if (this.searchTimer) {
         clearTimeout(this.searchTimer)
       }
       this.searchTimer = setTimeout(() => {
-        this.fetchPrompts({ reset: true })
+        if (this.activeTagId === 'banana') {
+          this.fetchPrompts({ reset: true })
+        } else if (this.activeTagId === 'ai-news') {
+          this.fetchAiNews({ reset: true })
+          this.fetchAiNewsTotal(this.searchText)
+        }
       }, 300)
     },
     handleScroll(event) {
@@ -309,9 +427,20 @@ export default {
       if (target.scrollHeight - target.scrollTop - target.clientHeight < threshold) {
         if (this.activeTagId === 'github') {
           this.fetchProjects()
+        } else if (this.activeTagId === 'ai-news') {
+          this.fetchAiNews()
         } else if (this.activeTagId === 'banana') {
           this.fetchPrompts()
         }
+      }
+    },
+    retryFetch() {
+      if (this.activeTagId === 'github') {
+        this.fetchProjects({ reset: true })
+      } else if (this.activeTagId === 'ai-news') {
+        this.fetchAiNews({ reset: true })
+      } else if (this.activeTagId === 'banana') {
+        this.fetchPrompts({ reset: true })
       }
     },
     updateTagCount(tagId, count) {
@@ -374,7 +503,7 @@ export default {
         this.updateTagCount('github', state.items.length)
       } catch (error) {
         if (reset) {
-          state.listError = '获取 GitHub 热榜失败，请稍后重试'
+          state.listError = '获取实时数采失败，请稍后重试'
           state.items = []
         } else {
           this.$message.error('加载更多失败，请稍后重试')
@@ -477,6 +606,118 @@ export default {
         state.isFetchingMore = false
       }
     },
+    normalizeNewsResponse(data) {
+      if (Array.isArray(data)) {
+        return { items: data }
+      }
+      if (!data || typeof data !== 'object') {
+        return { items: [] }
+      }
+      const items = data.items || data.data || data.results || data.list || data.news || []
+      const total = data.total !== undefined && data.total !== null
+        ? data.total
+        : (data.count !== undefined && data.count !== null
+          ? data.count
+          : (data.total_count !== undefined && data.total_count !== null
+            ? data.total_count
+            : data.totalCount))
+      const pages = data.pages !== undefined && data.pages !== null
+        ? data.pages
+        : (data.total_pages !== undefined && data.total_pages !== null
+          ? data.total_pages
+          : data.totalPages)
+      return {
+        items: Array.isArray(items) ? items : [],
+        total,
+        pages
+      }
+    },
+    mapNewsItem(item) {
+      if (!item) {
+        return {}
+      }
+      const newsId = item.id !== undefined && item.id !== null
+        ? item.id
+        : (item.news_id !== undefined && item.news_id !== null
+          ? item.news_id
+          : (item.newsId !== undefined && item.newsId !== null
+            ? item.newsId
+            : (item.article_id !== undefined && item.article_id !== null
+              ? item.article_id
+              : item.articleId)))
+      return {
+        id: newsId,
+        title: item.ai_title || item.title || item.headline || item.name,
+        summary: item.ai_summary || item.summary || item.description || item.excerpt || item.brief,
+        source: item.source || item.source_name || item.publisher || 'TechCrunch',
+        author: item.author || item.writer || '',
+        url: item.url || item.link || item.source_url || '',
+        published_at: item.published_at || item.publishedAt || item.created_at || item.createdAt || '',
+        image: item.image || item.cover || item.thumbnail || item.image_url || '',
+        content: item.ai_summary || item.content || item.body || item.html || '',
+        category: item.ai_category || item.category || '',
+        sentiment: item.ai_sentiment || item.sentiment || '',
+        highlights: Array.isArray(item.ai_highlights) ? item.ai_highlights : [],
+        keywords: Array.isArray(item.ai_keywords) ? item.ai_keywords : [],
+        ai_data: item.ai_data || null
+      }
+    },
+    async fetchAiNews({ reset = false } = {}) {
+      const state = this.aiNewsState
+      if (reset) {
+        state.page = 1
+        state.hasMore = true
+        state.items = []
+      }
+      if (!state.hasMore) {
+        return
+      }
+      if (reset) {
+        state.listLoading = true
+        state.listError = ''
+      } else {
+        state.isFetchingMore = true
+      }
+      try {
+        const params = {
+          page: state.page,
+          size: state.pageSize
+        }
+        if (this.searchText) {
+          params.keyword = this.searchText
+        }
+        const data = await searchTechCrunchNews(params)
+        const normalized = this.normalizeNewsResponse(data)
+        const list = normalized.items.map(this.mapNewsItem)
+        state.items = reset ? list : state.items.concat(list)
+        if (typeof normalized.pages === 'number') {
+          state.hasMore = state.page < normalized.pages
+        } else if (typeof normalized.total === 'number') {
+          state.hasMore = state.items.length < normalized.total
+        } else if (list.length < state.pageSize) {
+          state.hasMore = false
+        }
+        if (state.hasMore) {
+          state.page += 1
+        }
+        if (typeof normalized.total === 'number') {
+          state.total = normalized.total
+          this.updateTagCount('ai-news', normalized.total)
+        }
+      } catch (error) {
+        if (reset) {
+          state.listError = '获取 AI 报道失败，请稍后重试'
+          state.items = []
+        } else {
+          this.$message.error('加载更多失败，请稍后重试')
+        }
+      } finally {
+        if (reset) {
+          state.listLoading = false
+        }
+        state.isFetchingMore = false
+      }
+    },
     async openProjectDetail(project) {
       if (this.activeTagId === 'banana') {
         this.selectedProject = project
@@ -495,6 +736,24 @@ export default {
         this.$message.error('获取项目详情失败')
       } finally {
         this.detailLoading = false
+      }
+    },
+    async openNewsDetail(news) {
+      this.newsDetailVisible = true
+      this.newsDetailLoading = true
+      this.selectedNews = news
+      if (!news || !news.id) {
+        this.newsDetailLoading = false
+        return
+      }
+      try {
+        const detail = await getTechCrunchNewsDetail(news.id)
+        const mapped = this.mapNewsItem(detail)
+        this.selectedNews = { ...news, ...mapped }
+      } catch (error) {
+        this.$message.error('获取报道详情失败')
+      } finally {
+        this.newsDetailLoading = false
       }
     },
     resetFilters() {
@@ -779,6 +1038,116 @@ export default {
   padding-right: 20px;
   padding-bottom: 24px;
   padding-top: 72px;
+}
+
+// AI 报道列表
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.news-card {
+  display: flex;
+  gap: 18px;
+  padding: 18px;
+  background: #ffffff;
+  border: 1px solid #e8ecf3;
+  border-radius: 16px;
+  box-shadow: 0 12px 30px rgba(31, 42, 68, 0.06);
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 16px 36px rgba(31, 42, 68, 0.12);
+  }
+}
+
+.news-main {
+  flex: 1;
+  min-width: 0;
+}
+
+.news-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.news-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(70, 166, 255, 0.12);
+  color: #2c86d6;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.news-source {
+  font-size: 12px;
+  color: #98a2b3;
+}
+
+.news-title {
+  font-size: 16px;
+  color: #1f2a44;
+  line-height: 1.5;
+  margin-bottom: 8px;
+}
+
+.news-summary {
+  font-size: 13px;
+  color: #667085;
+  line-height: 1.6;
+  margin-bottom: 12px;
+}
+
+.news-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 10px;
+}
+
+.news-tag {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #f3f5fb;
+  color: #4b5565;
+  font-size: 12px;
+  font-weight: 600;
+
+  &.secondary {
+    background: rgba(70, 166, 255, 0.12);
+    color: #2c86d6;
+  }
+}
+
+.news-meta {
+  display: flex;
+  gap: 12px;
+  font-size: 12px;
+  color: #98a2b3;
+}
+
+.news-cover {
+  width: 120px;
+  height: 88px;
+  border-radius: 12px;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: #f2f4f8;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+  }
 }
 
 // 空状态

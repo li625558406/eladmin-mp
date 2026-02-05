@@ -4,6 +4,11 @@
       <h2>{{ title }}</h2>
       <span class="module-count">{{ count }} 个项目</span>
     </div>
+    <div v-if="creditName && creditUrl" class="modules-credit">
+      感谢
+      <a :href="creditUrl" target="_blank" rel="noopener noreferrer">{{ creditName }}</a>
+      提供
+    </div>
     <div class="search-section">
       <i class="el-icon-search" />
       <input
@@ -34,6 +39,14 @@ export default {
       default: ''
     },
     placeholder: {
+      type: String,
+      default: ''
+    },
+    creditName: {
+      type: String,
+      default: ''
+    },
+    creditUrl: {
       type: String,
       default: ''
     }
@@ -72,6 +85,23 @@ export default {
     font-weight: 700;
     color: var(--text-primary, #1e293b);
     letter-spacing: -0.3px;
+  }
+}
+
+.modules-credit {
+  font-size: 12px;
+  color: var(--text-muted, #64748b);
+  white-space: nowrap;
+
+  a {
+    color: var(--primary-color, #2563eb);
+    font-weight: 600;
+    margin: 0 4px;
+    text-decoration: none;
+
+    &:hover {
+      text-decoration: underline;
+    }
   }
 }
 

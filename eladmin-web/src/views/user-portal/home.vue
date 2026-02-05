@@ -62,6 +62,8 @@
                 :title="activeTagLabel"
                 :count="activeListCount"
                 :placeholder="searchPlaceholder"
+                :credit-name="activeTagId === 'banana' ? '松果先森' : ''"
+                :credit-url="activeTagId === 'banana' ? 'https://github.com/songguoxs/gpt4o-image-prompts' : ''"
                 @search="handleSearch"
               />
 

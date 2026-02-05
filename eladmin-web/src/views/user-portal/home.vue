@@ -185,7 +185,7 @@ export default {
         { id: 'tools', label: '工具集', path: '/user/tools' }
       ],
       tags: [
-        { id: 'github', name: '实时数采', count: 0 },
+        { id: 'github', name: 'GitHub 热榜', count: 0 },
         { id: 'ai-news', name: 'AI 报道', count: 0 },
         { id: 'banana', name: 'banana 绘图', count: 0 }
       ],

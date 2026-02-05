@@ -190,7 +190,7 @@ export default {
       searchText: '',
       activeTagId: 'github',
       navTabs: [
-        { id: 'realtime', label: '实时数采', path: '/user/home' },
+        { id: 'realtime', label: '实时数据', path: '/user/home' },
         { id: 'tools', label: '工具集', path: '/user/tools' }
       ],
       tags: [
@@ -286,7 +286,7 @@ export default {
       if (this.activeTagId === 'ai-news') {
         return '搜索 AI 新闻...'
       }
-      return '搜索 实时数采项目...'
+      return '搜索 实时数据项目...'
     },
     filteredProjects() {
       const items = [...this.activeState.items]
@@ -545,7 +545,7 @@ export default {
         this.updateTagCount('github', state.items.length)
       } catch (error) {
         if (reset) {
-          state.listError = '获取实时数采失败，请稍后重试'
+          state.listError = '获取实时数据失败，请稍后重试'
           state.items = []
         } else {
           this.$message.error('加载更多失败，请稍后重试')

@@ -130,7 +130,7 @@ export default {
       searchText: '',
       activeTagId: 'tools',
       navTabs: [
-        { id: 'realtime', label: '实时数采', path: '/user/home' },
+        { id: 'realtime', label: '实时数据', path: '/user/home' },
         { id: 'tools', label: '工具集', path: '/user/tools' }
       ],
       tags: [

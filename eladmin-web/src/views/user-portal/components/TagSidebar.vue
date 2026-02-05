@@ -21,7 +21,7 @@ export default {
   props: {
     title: {
       type: String,
-      default: '实时数采'
+      default: '实时数据'
     },
     tags: {
       type: Array,

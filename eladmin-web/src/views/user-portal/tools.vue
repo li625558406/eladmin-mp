@@ -35,8 +35,6 @@
             </el-dropdown-menu>
           </el-dropdown>
           <div v-else class="user-guest">
-            <img :src="defaultAvatar" alt="Guest" class="user-avatar guest">
-            <span class="username guest">未登录</span>
             <el-button class="login-btn" type="primary" size="mini" @click="goToLogin">登录/注册</el-button>
           </div>
         </div>

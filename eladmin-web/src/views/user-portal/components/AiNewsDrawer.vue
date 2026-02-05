@@ -300,6 +300,7 @@ export default {
 .link-btn {
   background: var(--primary-color, #2563eb);
   border-color: var(--primary-color, #2563eb);
+  border-radius: 7px;
 
   &:hover,
   &:focus {

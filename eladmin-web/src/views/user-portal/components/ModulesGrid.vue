@@ -224,7 +224,7 @@ export default {
 .module-card {
   background: var(--bg-secondary, #ffffff);
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 14px;
+  border-radius: 10px;
   padding: 16px;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -360,7 +360,7 @@ export default {
         background: var(--bg-muted, #f1f5f9);
         border: 1px solid var(--border-color, #e2e8f0);
         color: var(--text-muted, #64748b);
-        border-radius: 5px;
+        border-radius: 15px;
         font-weight: 500;
         white-space: nowrap;
       }

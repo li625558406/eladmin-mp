@@ -8,7 +8,7 @@
     <div class="drawer-content">
       <div class="drawer-header">
         <div>
-          <p class="drawer-repo">{{ project ? project.repo_name : '' }}</p>
+          <span class="badge">{{ project ? project.repo_name : '' }}</span>
           <h3 class="drawer-title">{{ project ? project.title : '项目详情' }}</h3>
         </div>
         <button class="drawer-close" @click="visibleProxy = false">
@@ -230,7 +230,16 @@ export default {
   color: var(--text-primary, #1e293b);
   line-height: 1.4;
 }
-
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: rgba(37, 99, 235, 0.12);
+  color: var(--primary-color, #2563eb);
+  font-size: 12px;
+  font-weight: 600;
+}
 .drawer-close {
   border: 1px solid var(--border-color, #e2e8f0);
   background: var(--bg-secondary, #ffffff);
@@ -367,8 +376,9 @@ export default {
 .drawer-section {
   background: var(--bg-primary, #f8fafc);
   border: 1px solid var(--border-color, #e2e8f0);
-  border-radius: 12px;
+  border-radius: 10px;
   padding: 14px;
+  margin-top: 10px;
 
   h4 {
     font-size: 14px;
@@ -482,7 +492,7 @@ export default {
     background: var(--primary-color, #2563eb);
     color: #ffffff;
     padding: 8px 16px;
-    border-radius: 10px;
+    border-radius: 7px;
     font-weight: 600;
     font-size: 12px;
     text-decoration: none;

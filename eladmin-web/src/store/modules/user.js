@@ -1,4 +1,5 @@
 import { login, getInfo, logout } from '@/api/login'
+import { emailLogin } from '@/api/userRegister'
 import { getToken, setToken, removeToken } from '@/utils/auth'
 
 const user = {
@@ -30,13 +31,30 @@ const user = {
     Login({ commit }, userInfo) {
       const rememberMe = userInfo.rememberMe
       return new Promise((resolve, reject) => {
-        login(userInfo.username, userInfo.password, userInfo.code, userInfo.uuid).then(res => {
+        login(userInfo.username, userInfo.password, userInfo.code, userInfo.uuid, userInfo.loginType).then(res => {
           setToken(res.token, rememberMe)
           commit('SET_TOKEN', res.token)
           setUserInfo(res.user, commit)
           // 第一次加载菜单时用到， 具体见 src 目录下的 permission.js
           commit('SET_LOAD_MENUS', true)
           resolve()
+        }).catch(error => {
+          reject(error)
+        })
+      })
+    },
+
+    // 邮箱验证码登录
+    EmailLogin({ commit }, userInfo) {
+      const rememberMe = userInfo.rememberMe
+      return new Promise((resolve, reject) => {
+        emailLogin({ email: userInfo.email, code: userInfo.code }).then(res => {
+          setToken(res.token, rememberMe)
+          commit('SET_TOKEN', res.token)
+          setUserInfo(res.user, commit)
+          // 第一次加载菜单时用到， 具体见 src 目录下的 permission.js
+          commit('SET_LOAD_MENUS', true)
+          resolve(res)
         }).catch(error => {
           reject(error)
         })

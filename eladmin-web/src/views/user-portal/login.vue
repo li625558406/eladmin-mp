@@ -285,7 +285,8 @@
 
 <script>
 import { sendEmailCode } from '@/api/emailVerifyCode'
-import { register, emailLogin } from '@/api/userRegister'
+import { register } from '@/api/userRegister'
+import { encrypt } from '@/utils/rsaEncrypt'
 
 export default {
   name: 'UserLogin',
@@ -420,13 +421,21 @@ export default {
       this.$refs.loginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          // TODO: 实现用户名密码登录
-          setTimeout(() => {
+          const user = {
+            username: this.loginForm.username,
+            password: encrypt(this.loginForm.password),
+            rememberMe: this.loginForm.rememberMe,
+            loginType: 'user'
+          }
+          this.$store.dispatch('Login', user).then(() => {
             this.loading = false
             this.$message.success('登录成功！')
             // 跳转到用户首页
             this.$router.push('/user/home')
-          }, 1000)
+          }).catch(err => {
+            this.loading = false
+            this.$message.error(err.message || '登录失败')
+          })
         }
       })
     },
@@ -434,18 +443,13 @@ export default {
       this.$refs.emailLoginForm.validate(valid => {
         if (valid) {
           this.loading = true
-          emailLogin({
+          this.$store.dispatch('EmailLogin', {
             email: this.emailLoginForm.email,
-            code: this.emailLoginForm.code
-          }).then(res => {
+            code: this.emailLoginForm.code,
+            rememberMe: this.emailLoginForm.rememberMe
+          }).then(() => {
             this.loading = false
             this.$message.success('登录成功！')
-            // 存储token
-            if (res.token) {
-              // TODO: 存储token到vuex和localStorage
-              console.log('Token:', res.token)
-              console.log('User:', res.user)
-            }
             // 跳转到用户首页
             this.$router.push('/user/home')
           }).catch(err => {

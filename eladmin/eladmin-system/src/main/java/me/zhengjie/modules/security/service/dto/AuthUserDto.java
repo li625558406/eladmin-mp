@@ -41,4 +41,7 @@ public class AuthUserDto {
 
     @ApiModelProperty(value = "验证码的key")
     private String uuid = "";
+
+    @ApiModelProperty(value = "登录类型")
+    private String loginType;
 }

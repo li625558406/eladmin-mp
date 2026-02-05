@@ -9,6 +9,19 @@
           <span class="brand-name">KONUS AI</span>
         </div>
 
+        <div class="nav-section">
+          <div class="nav-tabs">
+            <button
+              v-for="tab in navTabs"
+              :key="tab.id"
+              :class="['nav-tab', { active: isActiveTab(tab) }]"
+              @click="switchTab(tab)"
+            >
+              {{ tab.label }}
+            </button>
+          </div>
+        </div>
+
         <div class="user-section">
           <el-dropdown v-if="isLoggedIn" trigger="click" @command="handleCommand">
             <div class="user-profile">
@@ -37,6 +50,7 @@
         <div class="layout-container">
           <!-- 左侧分类导航 -->
           <TagSidebar
+            title="实时数采"
             :tags="tags"
             :active-tag-id="activeTagId"
             @select="selectTag"
@@ -129,6 +143,10 @@ export default {
     return {
       searchText: '',
       activeTagId: 'github',
+      navTabs: [
+        { id: 'realtime', label: '实时数采', path: '/user/home' },
+        { id: 'tools', label: '工具集', path: '/user/tools' }
+      ],
       tags: [
         { id: 'github', name: 'GitHub 热榜', count: 0 },
         { id: 'banana', name: 'banana 绘图', count: 0 }
@@ -190,7 +208,7 @@ export default {
       if (this.activeTagId === 'banana') {
         return '搜索 banana 绘图提示词...'
       }
-      return '搜索 GitHub 热榜项目...'
+      return '搜索 实时数采项目...'
     },
     filteredProjects() {
       const items = [...this.activeState.items]
@@ -238,6 +256,14 @@ export default {
     this.fetchPromptStats()
   },
   methods: {
+    isActiveTab(tab) {
+      return this.$route.path === tab.path
+    },
+    switchTab(tab) {
+      if (this.$route.path !== tab.path) {
+        this.$router.push(tab.path)
+      }
+    },
     async fetchPromptStats() {
       try {
         const data = await getPromptStats()
@@ -582,6 +608,44 @@ export default {
     font-weight: 700;
     color: #1f2a44;
     letter-spacing: -0.3px;
+  }
+}
+
+.nav-section {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+}
+
+.nav-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px;
+  background: #f3f5fb;
+  border-radius: 999px;
+  border: 1px solid #e6eaf3;
+}
+
+.nav-tab {
+  padding: 8px 22px;
+  border: 0;
+  background: transparent;
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #667085;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    color: var(--accent-color);
+  }
+
+  &.active {
+    color: #1f2a44;
+    background: #ffffff;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.08);
   }
 }
 

@@ -1,6 +1,6 @@
 <template>
   <aside class="sidebar-categories">
-    <div class="sidebar-title">实时数采</div>
+    <div class="sidebar-title">{{ title }}</div>
     <div class="tag-list">
       <button
         v-for="tag in tags"
@@ -19,6 +19,10 @@
 export default {
   name: 'TagSidebar',
   props: {
+    title: {
+      type: String,
+      default: '实时数采'
+    },
     tags: {
       type: Array,
       default: () => []

@@ -85,6 +85,12 @@ export const constantRouterMap = [
     component: (resolve) => require(['@/views/user-portal/home'], resolve),
     meta: { title: 'KONUS AI - 用户首页', noCache: true },
     hidden: true
+  },
+  {
+    path: '/user/tools',
+    component: (resolve) => require(['@/views/user-portal/tools'], resolve),
+    meta: { title: 'KONUS AI - 工具集', noCache: true },
+    hidden: true
   }
 ]
 

@@ -817,7 +817,8 @@ export default {
         this.$confirm('确定要退出登录吗？', '提示', {
           confirmButtonText: '确定',
           cancelButtonText: '取消',
-          type: 'warning'
+          type: 'warning',
+          customClass: 'user-confirm-dialog'
         }).then(() => {
           this.$store.dispatch('LogOut').then(() => {
             this.$message.success('已退出登录')

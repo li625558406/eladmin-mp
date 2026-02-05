@@ -33,7 +33,7 @@
           class="info-list"
         >
           <div v-if="project.category" class="info-item">
-            <span class="label">分类</span>
+            <span class="label">实时数采</span>
             <span class="value">{{ project.category }}</span>
           </div>
           <div v-if="project.model" class="info-item">

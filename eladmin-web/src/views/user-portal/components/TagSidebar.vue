@@ -1,6 +1,6 @@
 <template>
   <aside class="sidebar-categories">
-    <div class="sidebar-title">分类</div>
+    <div class="sidebar-title">实时数采</div>
     <div class="tag-list">
       <button
         v-for="tag in tags"

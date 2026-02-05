@@ -65,13 +65,13 @@ export const constantRouterMap = [
   // 用户端路由
   {
     path: '/',
-    redirect: '/user/login',
+    redirect: '/user/home',
     hidden: true
   },
   {
     path: '/user',
     component: (resolve) => require(['@/views/user-portal'], resolve),
-    redirect: '/user/login',
+    redirect: '/user/home',
     hidden: true
   },
   {

@@ -544,6 +544,7 @@ export default {
   background: #f6f7fb;
   font-family: 'Outfit', sans-serif;
   --header-height: 64px;
+  --accent-color: #46a6ff;
 }
 
 // 顶部导航栏
@@ -595,10 +596,10 @@ export default {
 
     &:hover {
       .username {
-        color: #2d5bff;
+        color: var(--accent-color);
       }
       i {
-        color: #2d5bff;
+        color: var(--accent-color);
       }
     }
 
@@ -647,6 +648,14 @@ export default {
       border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
+      background: var(--accent-color);
+      border-color: var(--accent-color);
+
+      &:hover,
+      &:focus {
+        background: #3a97f0;
+        border-color: #3a97f0;
+      }
     }
   }
 }

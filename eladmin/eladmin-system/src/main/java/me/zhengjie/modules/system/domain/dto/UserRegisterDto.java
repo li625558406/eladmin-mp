@@ -45,6 +45,10 @@ public class UserRegisterDto implements Serializable {
     @ApiModelProperty(value = "密码（RSA加密）", required = true)
     private String password;
 
+    @NotBlank(message = "确认密码不能为空")
+    @ApiModelProperty(value = "确认密码（RSA加密）", required = true)
+    private String confirmPassword;
+
     @NotBlank(message = "验证码不能为空")
     @ApiModelProperty(value = "邮箱验证码", required = true)
     private String code;

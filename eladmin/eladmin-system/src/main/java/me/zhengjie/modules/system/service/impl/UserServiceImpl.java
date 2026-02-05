@@ -316,8 +316,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         user.setPassword(password); // 密码已经加密
         user.setEnabled(true);
         user.setIsAdmin(false);
-        user.setPhone(""); // 默认空
-        user.setGender(""); // 默认空
+        user.setPhone(""); // 默认手机号
+        user.setGender(""); // 默认性别
+        user.setDeptId(7L); // 默认部门
         user.setPwdResetTime(new Date());
 
         // 保存用户
@@ -329,6 +330,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements Us
         Set<Role> roles = new HashSet<>();
         roles.add(defaultRole);
         userRoleMapper.insertData(user.getId(), roles);
+
+        // 分配默认岗位（job_id = 12）
+        Job defaultJob = new Job();
+        defaultJob.setId(12L);
+        Set<Job> jobs = new HashSet<>();
+        jobs.add(defaultJob);
+        userJobMapper.insertData(user.getId(), jobs);
 
         return user;
     }

@@ -3,12 +3,13 @@ import { encrypt } from '@/utils/rsaEncrypt'
 
 export function register(data) {
   return request({
-    url: '/api/user/register',
+    url: '/api/users/register',
     method: 'post',
     data: {
       username: data.username,
       email: data.email,
       password: encrypt(data.password),
+      confirmPassword: encrypt(data.confirmPassword),
       code: data.code
     }
   })

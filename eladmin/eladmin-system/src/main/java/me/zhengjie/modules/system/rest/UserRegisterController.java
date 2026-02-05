@@ -42,7 +42,7 @@ import java.util.Map;
  */
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/user")
+@RequestMapping("/api/users")
 @Api(tags = "系统：用户注册接口")
 public class UserRegisterController {
 
@@ -66,6 +66,10 @@ public class UserRegisterController {
 
         // 密码解密
         String password = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, registerDto.getPassword());
+        String confirmPassword = RsaUtils.decryptByPrivateKey(RsaProperties.privateKey, registerDto.getConfirmPassword());
+        if (!password.equals(confirmPassword)) {
+            throw new BadRequestException("两次密码输入不一致");
+        }
         
         // 密码长度验证
         if (password.length() < 6) {

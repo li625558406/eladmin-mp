@@ -50,6 +50,9 @@ public class DataServiceImpl implements DataService {
      */
     @Override
     public List<Long> getDeptIds(User user) {
+        if (user == null) {
+            return new ArrayList<>();
+        }
         String key = CacheKey.DATA_USER + user.getId();
         List<Long> ids = redisUtils.getList(key, Long.class);
         if (CollUtil.isEmpty(ids)) {
@@ -61,7 +64,9 @@ public class DataServiceImpl implements DataService {
                 DataScopeEnum dataScopeEnum = DataScopeEnum.find(role.getDataScope());
                 switch (Objects.requireNonNull(dataScopeEnum)) {
                     case THIS_LEVEL:
-                        deptIds.add(user.getDept().getId());
+                        if (user.getDept() != null) {
+                            deptIds.add(user.getDept().getId());
+                        }
                         break;
                     case CUSTOMIZE:
                         deptIds.addAll(getCustomize(deptIds, role));

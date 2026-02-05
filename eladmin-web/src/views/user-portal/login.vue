@@ -531,6 +531,7 @@ export default {
             username: this.registerForm.username,
             email: this.registerForm.email,
             password: this.registerForm.password,
+            confirmPassword: this.registerForm.confirmPassword,
             code: this.registerForm.code
           }).then(res => {
             this.loading = false
@@ -1044,6 +1045,7 @@ export default {
   display: flex;
   align-items: center;
   gap: 12px;
+  width: 100%;
 
   .input-label {
     flex-shrink: 0;
@@ -1057,6 +1059,8 @@ export default {
 
   ::v-deep .el-input {
     flex: 1;
+    width: 100%;
+    min-width: 0;
   }
 }
 
@@ -1069,6 +1073,8 @@ export default {
 
   ::v-deep .el-input {
     flex: 1;
+    width: 100%;
+    min-width: 0;
   }
 
   .code-btn {

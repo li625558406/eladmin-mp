@@ -10,10 +10,10 @@
         </div>
 
         <div class="user-section">
-          <el-dropdown trigger="click" @command="handleCommand">
+          <el-dropdown v-if="isLoggedIn" trigger="click" @command="handleCommand">
             <div class="user-profile">
-              <img src="@/assets/images/avatar.png" alt="User" class="user-avatar">
-              <span class="username">用户</span>
+              <img :src="userAvatar" alt="User" class="user-avatar">
+              <span class="username">{{ userDisplayName }}</span>
               <i class="el-icon-arrow-down" />
             </div>
             <el-dropdown-menu slot="dropdown">
@@ -22,6 +22,11 @@
               <el-dropdown-item divided command="logout">退出</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
+          <div v-else class="user-guest">
+            <img :src="defaultAvatar" alt="Guest" class="user-avatar guest">
+            <span class="username guest">未登录</span>
+            <el-button class="login-btn" type="primary" size="mini" @click="goToLogin">登录/注册</el-button>
+          </div>
         </div>
       </div>
     </header>
@@ -109,6 +114,8 @@ import TagSidebar from './components/TagSidebar'
 import ModulesToolbar from './components/ModulesToolbar'
 import ModulesGrid from './components/ModulesGrid'
 import ProjectDrawer from './components/ProjectDrawer'
+import { mapGetters } from 'vuex'
+import DefaultAvatar from '@/assets/images/avatar.png'
 
 export default {
   name: 'UserHome',
@@ -151,6 +158,27 @@ export default {
     }
   },
   computed: {
+    ...mapGetters(['user', 'baseApi', 'token']),
+    isLoggedIn() {
+      return Boolean(this.token)
+    },
+    userProfile() {
+      return this.user && this.user.user ? this.user.user : (this.user || {})
+    },
+    userDisplayName() {
+      const user = this.userProfile
+      return user.nickName || user.username || user.email || '用户'
+    },
+    userAvatar() {
+      const user = this.userProfile
+      if (user.avatarName && this.baseApi) {
+        return `${this.baseApi}/avatar/${user.avatarName}`
+      }
+      return DefaultAvatar
+    },
+    defaultAvatar() {
+      return DefaultAvatar
+    },
     activeState() {
       return this.activeTagId === 'banana' ? this.bananaState : this.githubState
     },
@@ -482,14 +510,19 @@ export default {
           cancelButtonText: '取消',
           type: 'warning'
         }).then(() => {
-          this.$message.success('已退出登录')
-          this.$router.push('/user/login')
+          this.$store.dispatch('LogOut').then(() => {
+            this.$message.success('已退出登录')
+            this.$router.push('/user/login')
+          })
         })
       } else if (command === 'profile') {
         this.$message.info('个人资料功能开发中')
       } else if (command === 'settings') {
         this.$message.info('设置功能开发中')
       }
+    },
+    goToLogin() {
+      this.$router.push('/user/login')
     }
   }
 }
@@ -562,10 +595,10 @@ export default {
 
     &:hover {
       .username {
-        color: #ffd2a6;
+        color: #2d5bff;
       }
       i {
-        color: #ffd2a6;
+        color: #2d5bff;
       }
     }
 
@@ -573,7 +606,8 @@ export default {
       width: 30px;
       height: 30px;
       border-radius: 50%;
-      border: 2px solid #ffd2a6;
+      border: 2px solid #e8ecf3;
+      object-fit: cover;
     }
 
     .username {
@@ -585,6 +619,34 @@ export default {
     i {
       font-size: 12px;
       color: #98a2b3;
+    }
+  }
+
+  .user-guest {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+
+    .user-avatar.guest {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid #e8ecf3;
+      object-fit: cover;
+      opacity: 0.9;
+    }
+
+    .username.guest {
+      font-size: 13px;
+      color: #98a2b3;
+    }
+
+    .login-btn {
+      height: 28px;
+      padding: 0 12px;
+      border-radius: 14px;
+      font-size: 12px;
+      font-weight: 600;
     }
   }
 }

@@ -80,33 +80,42 @@
 
               <!-- 模块卡片网格 -->
               <div v-else-if="activeTagId === 'ai-news'" class="news-list">
-                <article
-                  v-for="news in filteredNews"
-                  :key="news.id || news.url || news.title"
-                  class="news-card"
-                  @click="openNewsDetail(news)"
+                <div
+                  v-for="group in groupedAiNews"
+                  :key="`news-group-${group.date}`"
+                  class="news-group"
                 >
-                  <div class="news-main">
-                    <div class="news-header">
-                      <span class="news-badge">AI 报道</span>
-                      <span v-if="news.source" class="news-source">{{ news.source }}</span>
-                    </div>
-                    <h3 class="news-title">{{ news.title || '未命名报道' }}</h3>
-                    <p class="news-summary">{{ news.summary || '暂无摘要内容' }}</p>
-                    <div v-if="news.category || news.sentiment" class="news-tags">
-                      <span v-if="news.category" class="news-tag">{{ news.category }}</span>
-                      <span v-if="news.sentiment" class="news-tag secondary">{{ news.sentiment }}</span>
-                    </div>
-                    <div class="news-meta">
-                      <span v-if="news.published_at" class="news-date">{{ formatDateOnly(news.published_at) }}</span>
-                      <span v-else class="news-date">未知日期</span>
-                      <span v-if="news.author" class="news-author">{{ news.author }}</span>
-                    </div>
+                  <div class="date-divider">
+                    <span>{{ group.date }}</span>
                   </div>
-                  <div v-if="news.image" class="news-cover">
-                    <img :src="news.image" alt="cover">
-                  </div>
-                </article>
+                  <article
+                    v-for="news in group.items"
+                    :key="news.id || news.url || news.title"
+                    class="news-card"
+                    @click="openNewsDetail(news)"
+                  >
+                    <div class="news-main">
+                      <div class="news-header">
+                        <span class="news-badge">AI 报道</span>
+                        <span v-if="news.source" class="news-source">{{ news.source }}</span>
+                      </div>
+                      <h3 class="news-title">{{ news.title || '未命名报道' }}</h3>
+                      <p class="news-summary">{{ news.summary || '暂无摘要内容' }}</p>
+                      <div v-if="news.category || news.sentiment" class="news-tags">
+                        <span v-if="news.category" class="news-tag">{{ news.category }}</span>
+                        <span v-if="news.sentiment" class="news-tag secondary">{{ news.sentiment }}</span>
+                      </div>
+                      <div class="news-meta">
+                        <span v-if="news.published_at" class="news-date">{{ formatDateOnly(news.published_at) }}</span>
+                        <span v-else class="news-date">未知日期</span>
+                        <span v-if="news.author" class="news-author">{{ news.author }}</span>
+                      </div>
+                    </div>
+                    <div v-if="news.image" class="news-cover">
+                      <img :src="news.image" alt="cover">
+                    </div>
+                  </article>
+                </div>
               </div>
               <ModulesGrid
                 v-else-if="activeTagId === 'github' && groupedGithubProjects.length > 0"
@@ -327,6 +336,17 @@ export default {
           news.author
         ].some(field => field && field.toLowerCase().includes(searchLower))
       })
+    },
+    groupedAiNews() {
+      const groups = new Map()
+      this.filteredNews.forEach(news => {
+        const dateKey = this.formatDateOnly(news.published_at)
+        if (!groups.has(dateKey)) {
+          groups.set(dateKey, [])
+        }
+        groups.get(dateKey).push(news)
+      })
+      return Array.from(groups.entries()).map(([date, items]) => ({ date, items }))
     },
     activeListCount() {
       if (this.activeTagId === 'ai-news') {
@@ -971,13 +991,16 @@ export default {
       border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
-      background: var(--accent-color);
-      border-color: var(--accent-color);
+      background: linear-gradient(135deg, #46a6ff 0%, #7bc1ff 100%);
+      border-color: #46a6ff;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(70, 166, 255, 0.25);
 
       &:hover,
       &:focus {
-        background: #3a97f0;
-        border-color: #3a97f0;
+        background: linear-gradient(135deg, #7bc1ff 0%, #46a6ff 100%);
+        border-color: #46a6ff;
+        box-shadow: 0 8px 18px rgba(70, 166, 255, 0.35);
       }
     }
   }
@@ -1047,6 +1070,38 @@ export default {
   gap: 16px;
 }
 
+.news-group {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.date-divider {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin: 6px 0 4px;
+  color: #6b7280;
+  font-size: 12px;
+  font-weight: 600;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e7ebf2;
+  }
+
+  span {
+    padding: 4px 10px;
+    background: #ffffff;
+    border: 1px solid #e8ecf3;
+    border-radius: 10px;
+    color: #1f2a44;
+  }
+}
+
 .news-card {
   display: flex;
   gap: 18px;
@@ -1059,8 +1114,9 @@ export default {
   transition: all 0.2s ease;
 
   &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 16px 36px rgba(31, 42, 68, 0.12);
+    border-color: #ffd2a6;
+    transform: translateY(-3px);
+    box-shadow: 0 14px 34px rgba(91, 91, 246, 0.14);
   }
 }
 
@@ -1081,8 +1137,8 @@ export default {
   align-items: center;
   padding: 4px 10px;
   border-radius: 999px;
-  background: rgba(70, 166, 255, 0.12);
-  color: #2c86d6;
+  background: rgba(255, 210, 166, 0.25);
+  color: #c26a2e;
   font-size: 12px;
   font-weight: 600;
 }
@@ -1116,14 +1172,14 @@ export default {
 .news-tag {
   padding: 4px 10px;
   border-radius: 999px;
-  background: #f3f5fb;
-  color: #4b5565;
+  background: #f2f4f8;
+  color: #7a869a;
   font-size: 12px;
   font-weight: 600;
 
   &.secondary {
-    background: rgba(70, 166, 255, 0.12);
-    color: #2c86d6;
+    background: #f2f4f8;
+    color: #7a869a;
   }
 }
 
@@ -1140,7 +1196,7 @@ export default {
   border-radius: 12px;
   overflow: hidden;
   flex-shrink: 0;
-  background: #f2f4f8;
+  background: #f3f5ff;
 
   img {
     width: 100%;

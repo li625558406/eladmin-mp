@@ -444,13 +444,16 @@ export default {
       border-radius: 14px;
       font-size: 12px;
       font-weight: 600;
-      background: var(--accent-color);
-      border-color: var(--accent-color);
+      background: linear-gradient(135deg, #46a6ff 0%, #7bc1ff 100%);
+      border-color: #46a6ff;
+      color: #ffffff;
+      box-shadow: 0 6px 16px rgba(70, 166, 255, 0.25);
 
       &:hover,
       &:focus {
-        background: #3a97f0;
-        border-color: #3a97f0;
+        background: linear-gradient(135deg, #7bc1ff 0%, #46a6ff 100%);
+        border-color: #46a6ff;
+        box-shadow: 0 8px 18px rgba(70, 166, 255, 0.35);
       }
     }
   }

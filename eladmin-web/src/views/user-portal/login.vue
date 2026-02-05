@@ -559,9 +559,9 @@ export default {
 
 // CSS 变量定义
 :root {
-  --primary-color: #2D5BFF;
-  --primary-dark: #1E40AF;
-  --primary-light: #4E7FFF;
+  --primary-color: #46A6FF;
+  --primary-dark: #2C86D6;
+  --primary-light: #7BC1FF;
   --secondary-color: #FF6B9D;
   --accent-color: #FFB800;
   --success-color: #00D084;
@@ -1286,7 +1286,7 @@ export default {
   height: 52px;
   font-size: 16px;
   font-weight: 700;
-  background: linear-gradient(135deg, #2D5BFF 0%, #4E7FFF 100%) !important;
+  background: linear-gradient(135deg, #46A6FF 0%, #7BC1FF 100%) !important;
   border: none !important;
   border-radius: 12px;
   transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -1294,7 +1294,7 @@ export default {
   overflow: hidden;
   font-family: 'Outfit', sans-serif;
   margin-top: 6px;
-  box-shadow: 0 4px 20px rgba(45, 91, 255, 0.4),
+  box-shadow: 0 4px 20px rgba(70, 166, 255, 0.35),
               inset 0 1px 0 rgba(255, 255, 255, 0.25);
 
   // 强制按钮文字颜色
@@ -1326,9 +1326,9 @@ export default {
 
   &:hover {
     transform: translateY(-1px);
-    background: linear-gradient(135deg, #4E7FFF 0%, #2D5BFF 100%) !important;
-    box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
-                0 4px 12px rgba(45, 91, 255, 0.35),
+    background: linear-gradient(135deg, #7BC1FF 0%, #46A6FF 100%) !important;
+    box-shadow: 0 8px 25px rgba(70, 166, 255, 0.45),
+                0 4px 12px rgba(70, 166, 255, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
 
     &::before {
@@ -1339,15 +1339,15 @@ export default {
   &:active {
     transform: translateY(0);
     transition: all 0.1s ease;
-    box-shadow: 0 4px 15px rgba(45, 91, 255, 0.5),
+    box-shadow: 0 4px 15px rgba(70, 166, 255, 0.45),
                 inset 0 1px 3px rgba(0, 0, 0, 0.2);
   }
 
   &:focus {
     outline: none;
     transform: translateY(-1px);
-    box-shadow: 0 8px 25px rgba(45, 91, 255, 0.5),
-                0 4px 12px rgba(45, 91, 255, 0.35),
+    box-shadow: 0 8px 25px rgba(70, 166, 255, 0.45),
+                0 4px 12px rgba(70, 166, 255, 0.3),
                 inset 0 1px 0 rgba(255, 255, 255, 0.3);
   }
 }

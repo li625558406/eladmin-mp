@@ -167,8 +167,8 @@ export default {
   display: flex;
   align-items: center;
   gap: 16px;
-  margin: 6px 0 4px;
-  color: #98a2b3;
+  margin: 12px 0 8px;
+  color: #6b7280;
   font-size: 12px;
   font-weight: 600;
 
@@ -178,6 +178,14 @@ export default {
     flex: 1;
     height: 1px;
     background: #e7ebf2;
+  }
+
+  span {
+    padding: 4px 10px;
+    background: #ffffff;
+    border: 1px solid #e8ecf3;
+    border-radius: 10px;
+    color: #1f2a44;
   }
 }
 

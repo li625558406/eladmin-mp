@@ -22,61 +22,63 @@
       </div>
 
       <div v-else-if="project" class="drawer-body">
-        <div v-if="isBanana && project.image_url" class="drawer-cover" @click="previewVisible = true">
-          <img :src="project.image_url" :alt="project.title || ''">
-        </div>
-        <div v-if="isBanana && project.tags && project.tags.length" class="drawer-tags">
-          <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
-        </div>
-        <div
-          v-if="isBanana && (project.category || project.model)"
-          class="info-list"
-        >
-          <div v-if="project.category" class="info-item">
-            <span class="label">实时数据</span>
-            <span class="value">{{ project.category }}</span>
+        <div class="drawer-scroll">
+          <div v-if="isBanana && project.image_url" class="drawer-cover" @click="previewVisible = true">
+            <img :src="project.image_url" :alt="project.title || ''">
           </div>
-          <div v-if="project.model" class="info-item">
-            <span class="label">模型</span>
-            <span class="value">{{ project.model }}</span>
+          <div v-if="isBanana && project.tags && project.tags.length" class="drawer-tags">
+            <span v-for="tag in project.tags" :key="tag" class="tag">{{ tag }}</span>
           </div>
-        </div>
-
-        <div v-if="!isBanana" class="drawer-meta">
-          <span class="meta-chip">语言：{{ project.language || '未知' }}</span>
-          <span class="meta-chip">星标：{{ formatNumber(project.stars) }}</span>
-          <span class="meta-chip">Fork：{{ formatNumber(project.forks) }}</span>
-          <span class="meta-chip">热榜：{{ formatPeriodLabel(project.trend_period) }}</span>
-        </div>
-
-        <div v-if="project.analysis_data && project.analysis_data.use_cases" class="drawer-section">
-          <h4>适用场景</h4>
-          <ul>
-            <li v-for="item in project.analysis_data.use_cases" :key="item">{{ item }}</li>
-          </ul>
-        </div>
-
-        <div v-if="project.analysis_data && project.analysis_data.highlights" class="drawer-section">
-          <h4>亮点</h4>
-          <ul>
-            <li v-for="item in project.analysis_data.highlights" :key="item">{{ item }}</li>
-          </ul>
-        </div>
-
-        <div v-if="isBanana && project.prompt_en" class="drawer-section">
-          <div class="section-header">
-            <h4>Prompt (EN)</h4>
-            <button class="copy-btn" @click="copyText(project.prompt_en)">复制</button>
+          <div
+            v-if="isBanana && (project.category || project.model)"
+            class="info-list"
+          >
+            <div v-if="project.category" class="info-item">
+              <span class="label">实时数据</span>
+              <span class="value">{{ project.category }}</span>
+            </div>
+            <div v-if="project.model" class="info-item">
+              <span class="label">模型</span>
+              <span class="value">{{ project.model }}</span>
+            </div>
           </div>
-          <p class="prompt-text full-text">{{ project.prompt_en }}</p>
-        </div>
 
-        <div v-if="isBanana && project.prompt_zh" class="drawer-section">
-          <div class="section-header">
-            <h4>Prompt (中文)</h4>
-            <button class="copy-btn" @click="copyText(project.prompt_zh)">复制</button>
+          <div v-if="!isBanana" class="drawer-meta">
+            <span class="meta-chip">语言：{{ project.language || '未知' }}</span>
+            <span class="meta-chip">星标：{{ formatNumber(project.stars) }}</span>
+            <span class="meta-chip">Fork：{{ formatNumber(project.forks) }}</span>
+            <span class="meta-chip">热榜：{{ formatPeriodLabel(project.trend_period) }}</span>
           </div>
-          <p class="prompt-text full-text">{{ project.prompt_zh }}</p>
+
+          <div v-if="project.analysis_data && project.analysis_data.use_cases" class="drawer-section">
+            <h4>适用场景</h4>
+            <ul>
+              <li v-for="item in project.analysis_data.use_cases" :key="item">{{ item }}</li>
+            </ul>
+          </div>
+
+          <div v-if="project.analysis_data && project.analysis_data.highlights" class="drawer-section">
+            <h4>亮点</h4>
+            <ul>
+              <li v-for="item in project.analysis_data.highlights" :key="item">{{ item }}</li>
+            </ul>
+          </div>
+
+          <div v-if="isBanana && project.prompt_en" class="drawer-section">
+            <div class="section-header">
+              <h4>Prompt (EN)</h4>
+              <button class="copy-btn" @click="copyText(project.prompt_en)">复制</button>
+            </div>
+            <p class="prompt-text full-text">{{ project.prompt_en }}</p>
+          </div>
+
+          <div v-if="isBanana && project.prompt_zh" class="drawer-section">
+            <div class="section-header">
+              <h4>Prompt (中文)</h4>
+              <button class="copy-btn" @click="copyText(project.prompt_zh)">复制</button>
+            </div>
+            <p class="prompt-text full-text">{{ project.prompt_zh }}</p>
+          </div>
         </div>
 
         <div v-if="project.repo_url" class="drawer-action">
@@ -199,7 +201,10 @@ export default {
 }
 
 .drawer-content {
-  padding: 24px;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  padding: 24px 24px 30px;
 }
 
 .drawer-header {
@@ -209,27 +214,30 @@ export default {
   gap: 16px;
   border-bottom: 1px solid var(--border-color, #e2e8f0);
   padding-bottom: 16px;
-  margin-bottom: 20px;
+  margin-bottom: 18px;
 }
 
 .drawer-repo {
   font-size: 12px;
   color: var(--text-muted, #64748b);
   margin-bottom: 6px;
+  line-height: 1.4;
 }
 
 .drawer-title {
   font-size: 20px;
   font-weight: 700;
   color: var(--text-primary, #1e293b);
+  line-height: 1.4;
 }
 
 .drawer-close {
-  border: none;
-  background: var(--bg-muted, #f1f5f9);
-  border-radius: 8px;
+  border: 1px solid var(--border-color, #e2e8f0);
+  background: var(--bg-secondary, #ffffff);
+  border-radius: 50%;
   width: 32px;
   height: 32px;
+  min-width: 32px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -237,7 +245,7 @@ export default {
   transition: all 0.2s ease;
 
   &:hover {
-    background: var(--border-color, #e2e8f0);
+    background: var(--bg-muted, #f1f5f9);
   }
 }
 
@@ -256,6 +264,14 @@ export default {
   display: flex;
   flex-direction: column;
   gap: 18px;
+  flex: 1;
+  min-height: 0;
+}
+
+.drawer-scroll {
+  flex: 1;
+  overflow-y: auto;
+  padding-right: 4px;
 }
 
 .drawer-cover {
@@ -364,14 +380,20 @@ export default {
   p {
     margin: 0;
     color: var(--text-secondary, #475569);
-    line-height: 1.6;
+    line-height: 1.75;
+    font-size: 14px;
   }
 
   ul {
     margin: 0;
     padding-left: 16px;
     color: var(--text-secondary, #475569);
-    line-height: 1.6;
+    line-height: 1.75;
+    font-size: 14px;
+  }
+
+  li {
+    margin-bottom: 6px;
   }
 }
 
@@ -404,6 +426,7 @@ export default {
   color: #5d6472;
   line-height: 1.6;
   white-space: pre-line;
+  font-size: 14px;
 }
 
 ::v-deep .image-preview-dialog {
@@ -451,13 +474,17 @@ export default {
 .drawer-action {
   display: flex;
   justify-content: flex-start;
+  margin-top: auto;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
 
   a {
     background: var(--primary-color, #2563eb);
     color: #ffffff;
-    padding: 10px 16px;
+    padding: 8px 16px;
     border-radius: 10px;
     font-weight: 600;
+    font-size: 12px;
     text-decoration: none;
     box-shadow: 0 6px 16px rgba(37, 99, 235, 0.2);
     transition: all 0.2s ease;

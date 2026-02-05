@@ -24,28 +24,29 @@
       </div>
 
       <div v-else class="drawer-body">
-        <p v-if="newsSummary" class="summary">{{ newsSummary }}</p>
-        <div v-if="newsContent" class="content" v-html="newsContent" />
-        <div v-else-if="!newsSummary" class="empty">暂无详情内容</div>
+        <div class="drawer-scroll">
+          <div v-if="newsContent" class="content" v-html="newsContent" />
+          <div v-else-if="!newsSummary" class="empty">暂无详情内容</div>
 
-        <div v-if="newsCategory || newsSentiment" class="meta-tags">
-          <span v-if="newsCategory" class="tag">{{ newsCategory }}</span>
-          <span v-if="newsSentiment" class="tag secondary">{{ newsSentiment }}</span>
-        </div>
+          <div v-if="newsCategory || newsSentiment" class="meta-tags">
+            <span v-if="newsCategory" class="tag">{{ newsCategory }}</span>
+            <span v-if="newsSentiment" class="tag secondary">{{ newsSentiment }}</span>
+          </div>
 
-        <div v-if="newsHighlights.length" class="section">
-          <h3>要点</h3>
-          <ul>
-            <li v-for="(item, index) in newsHighlights" :key="`highlight-${index}`">{{ item }}</li>
-          </ul>
-        </div>
+          <div v-if="newsHighlights.length" class="section">
+            <h3>要点</h3>
+            <ul>
+              <li v-for="(item, index) in newsHighlights" :key="`highlight-${index}`">{{ item }}</li>
+            </ul>
+          </div>
 
-        <div v-if="newsKeywords.length" class="section">
-          <h3>关键词</h3>
-          <div class="keywords">
-            <span v-for="(item, index) in newsKeywords" :key="`keyword-${index}`" class="keyword">
-              {{ item }}
-            </span>
+          <div v-if="newsKeywords.length" class="section">
+            <h3>关键词</h3>
+            <div class="keywords">
+              <span v-for="(item, index) in newsKeywords" :key="`keyword-${index}`" class="keyword">
+                {{ item }}
+              </span>
+            </div>
           </div>
         </div>
 
@@ -207,7 +208,15 @@ export default {
 
 .drawer-body {
   flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.drawer-scroll {
+  flex: 1;
   overflow-y: auto;
+  padding-right: 4px;
 }
 
 .summary {
@@ -283,7 +292,9 @@ export default {
 }
 
 .actions {
-  margin-top: 20px;
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--border-color, #e2e8f0);
 }
 
 .link-btn {

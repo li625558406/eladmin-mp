@@ -161,6 +161,8 @@
       :loading="newsDetailLoading"
       :news="selectedNews"
     />
+
+    <div class="user-footer">© 2026 KONUS AI. All rights reserved.</div>
   </div>
 </template>
 
@@ -1345,6 +1347,17 @@ export default {
       transform: translateY(0);
     }
   }
+}
+
+.user-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  z-index: 900;
 }
 
 // Element UI 下拉菜单样式

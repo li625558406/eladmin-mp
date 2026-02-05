@@ -56,13 +56,7 @@
           <!-- 右侧模块展示区 -->
           <div ref="modulesScroll" class="modules-area" @scroll="handleScroll">
             <div class="modules-scroll-inner">
-              <ModulesToolbar
-                v-model="searchText"
-                :title="activeTagLabel"
-                :count="filteredProjects.length"
-                :placeholder="searchPlaceholder"
-                @search="handleSearch"
-              />
+              <div class="tools-title">{{ activeTagLabel }}</div>
 
               <div v-if="listLoading" class="loading-state">
                 <i class="el-icon-loading" />
@@ -96,6 +90,8 @@
           </div>
         </div>
       </div>
+      <ModulesToolbar />
+
     </main>
 
     <ProjectDrawer
@@ -106,6 +102,7 @@
       :format-period-label="formatPeriodLabel"
       :variant="activeTagId"
     />
+    <div class="user-footer">© 2026 KONUS AI. All rights reserved.</div>
   </div>
 </template>
 
@@ -540,7 +537,16 @@ export default {
 .modules-scroll-inner {
   padding-right: 20px;
   padding-bottom: 24px;
-  padding-top: 72px;
+  padding-top: 24px;
+}
+
+.tools-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: var(--text-primary, #1e293b);
+  letter-spacing: -0.3px;
+  line-height: 1.4;
+  margin-bottom: 16px;
 }
 
 // 空状态
@@ -576,6 +582,17 @@ export default {
   gap: 8px;
   color: var(--text-muted);
   padding: 16px 0;
+}
+
+.user-footer {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 16px;
+  text-align: center;
+  font-size: 12px;
+  color: var(--text-muted);
+  z-index: 900;
 }
 
 @media (max-width: 1280px) {

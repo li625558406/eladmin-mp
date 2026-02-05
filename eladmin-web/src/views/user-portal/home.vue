@@ -23,7 +23,7 @@
         </div>
 
         <div class="user-section">
-          <el-dropdown v-if="isLoggedIn" trigger="click" @command="handleCommand">
+          <el-dropdown v-if="isLoggedIn" trigger="click" popper-class="user-dropdown-menu" @command="handleCommand">
             <div class="user-profile">
               <img :src="userAvatar" alt="User" class="user-avatar">
               <span class="username">{{ userDisplayName }}</span>
@@ -94,7 +94,7 @@
                   >
                     <div class="news-main">
                       <div class="news-header">
-                        <span class="news-badge">AI 报道</span>
+                        <span class="news-badge">AI 新闻</span>
                         <span v-if="news.source" class="news-source">{{ news.source }}</span>
                       </div>
                       <h3 class="news-title">{{ news.title || '未命名报道' }}</h3>
@@ -193,7 +193,7 @@ export default {
       ],
       tags: [
         { id: 'github', name: 'GitHub 热榜', count: 0 },
-        { id: 'ai-news', name: 'AI 报道', count: 0 },
+        { id: 'ai-news', name: 'AI 新闻', count: 0 },
         { id: 'banana', name: 'banana 绘图', count: 0 }
       ],
       githubState: {
@@ -273,7 +273,7 @@ export default {
         return '搜索 banana 绘图提示词...'
       }
       if (this.activeTagId === 'ai-news') {
-        return '搜索 AI 报道...'
+        return '搜索 AI 新闻...'
       }
       return '搜索 实时数采项目...'
     },
@@ -313,7 +313,7 @@ export default {
     },
     emptyStateText() {
       if (this.activeTagId === 'ai-news') {
-        return '未找到 AI 报道'
+        return '未找到 AI 新闻'
       }
       if (this.activeTagId !== 'github') {
         return '未找到绘图提示词'
@@ -730,7 +730,7 @@ export default {
         }
       } catch (error) {
         if (reset) {
-          state.listError = '获取 AI 报道失败，请稍后重试'
+          state.listError = '获取 AI 新闻失败，请稍后重试'
           state.items = []
         } else {
           this.$message.error('加载更多失败，请稍后重试')
@@ -1080,7 +1080,7 @@ export default {
   padding-top: 72px;
 }
 
-// AI 报道列表
+// AI 新闻列表
 .news-list {
   display: flex;
   flex-direction: column;

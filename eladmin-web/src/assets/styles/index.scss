@@ -231,3 +231,33 @@ aside {
     border-color: #1D4ED8;
   }
 }
+
+// User portal dropdown menu
+.user-dropdown-menu {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 10px;
+  padding: 6px;
+  box-shadow: 0 12px 30px rgba(15, 23, 42, 0.12);
+
+  .el-dropdown-menu__item {
+    color: #475569;
+    font-size: 13px;
+    font-weight: 500;
+    padding: 9px 14px;
+    border-radius: 7px;
+    transition: all 0.2s ease;
+    font-family: 'Outfit', sans-serif;
+
+    &:hover {
+      background: #F1F5F9;
+      color: #1E293B;
+    }
+
+    &.is-divided {
+      margin-top: 4px;
+      padding-top: 9px;
+      border-top: 1px solid #E2E8F0;
+    }
+  }
+}

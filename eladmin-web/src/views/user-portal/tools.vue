@@ -22,7 +22,7 @@
         </div>
 
         <div class="user-section">
-          <el-dropdown v-if="isLoggedIn" trigger="click" @command="handleCommand">
+          <el-dropdown v-if="isLoggedIn" trigger="click" popper-class="user-dropdown-menu" @command="handleCommand">
             <div class="user-profile">
               <img :src="userAvatar" alt="User" class="user-avatar">
               <span class="username">{{ userDisplayName }}</span>

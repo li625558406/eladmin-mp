@@ -8,7 +8,7 @@
     <div class="drawer-content">
       <div class="drawer-header">
         <div class="title-group">
-          <span class="badge">AI 报道</span>
+          <span class="badge">AI 新闻</span>
           <h2 class="title">{{ newsTitle }}</h2>
           <p v-if="newsSource || newsDate" class="meta">
             <span v-if="newsSource" class="source">{{ newsSource }}</span>
@@ -83,7 +83,7 @@ export default {
   },
   computed: {
     newsTitle() {
-      return this.news.ai_title || this.news.title || this.news.headline || this.news.name || 'AI 报道详情'
+      return this.news.ai_title || this.news.title || this.news.headline || this.news.name || 'AI 新闻详情'
     },
     newsSummary() {
       return this.news.ai_summary || this.news.summary || this.news.description || this.news.excerpt || ''

@@ -145,9 +145,6 @@ export default {
       selectedProject: null
     }
   },
-  created() {
-    this.ensureUserProfile()
-  },
   computed: {
     ...mapGetters(['user', 'baseApi', 'token']),
     isLoggedIn() {
@@ -213,6 +210,9 @@ export default {
     isFetchingMore() {
       return this.activeState.isFetchingMore
     }
+  },
+  created() {
+    this.ensureUserProfile()
   },
   methods: {
     ensureUserProfile() {

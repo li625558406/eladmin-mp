@@ -90,7 +90,6 @@
           </div>
         </div>
       </div>
-      <ModulesToolbar />
 
     </main>
 
@@ -108,7 +107,6 @@
 
 <script>
 import TagSidebar from './components/TagSidebar'
-import ModulesToolbar from './components/ModulesToolbar'
 import ModulesGrid from './components/ModulesGrid'
 import ProjectDrawer from './components/ProjectDrawer'
 import { mapGetters } from 'vuex'
@@ -118,7 +116,6 @@ export default {
   name: 'UserTools',
   components: {
     TagSidebar,
-    ModulesToolbar,
     ModulesGrid,
     ProjectDrawer
   },
